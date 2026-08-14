@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Test Portal - Skill Assessment Engine</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top App Navigation Header -->
+  <header class="app-header">
+    <div class="brand-title">
+      <div class="logo-icon">⌨️</div>
+      <div>
+        <span>Typing Test Portal</span>
+        <div class="sub-brand">Skill Assessment Engine</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button type="button" id="btn-history-nav" class="btn btn-secondary" title="View Past Exam Scorecards">
+        📜 Past Results
+      </button>
+      <button type="button" id="btn-home-nav" class="btn btn-primary" title="Return to Home">
+        🏠 Home
+      </button>
+      <button type="button" id="btn-admin-modal" class="btn btn-secondary">
+        🔒 Admin Settings
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- View 1: Home Landing Page & Exam Selection -->
+    <section id="view-home" class="card">
+      <div class="hero-header">
+        <h1 class="hero-title">Typing Skill Assessment Portal</h1>
+        <p class="hero-subtitle">Dual-Language Assessment Engine (English QWERTY & Hindi Mangal / Kruti Dev)</p>
+      </div>
+
+      <div class="exam-types-grid">
+        <!-- Card 1: Combined Dual Exam (Recommended) -->
+        <div class="exam-type-card featured" id="card-exam-combined">
+          <div class="card-badge">RECOMMENDED DUAL TEST</div>
+          <div class="card-icon">🏆</div>
+          <h3>Combined Dual Typing Test</h3>
+          <p>Sequence: Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min) [Eng & Hindi]</p>
+          <ul class="exam-features">
+            <li>✓ Auto-starts timer on first keypress</li>
+            <li>✓ Single Word Backspace Only (Default)</li>
+            <li>✓ Qualification: Eng ≥30 WPM, Hindi ≥25 WPM</li>
+            <li>✓ Clean A4 Single-Page B&W Printable Scorecard</li>
+          </ul>
+          <button type="button" class="btn btn-primary btn-block btn-start-flow" data-type="combined">
+            ▶️ Register & Start Dual Exam
+          </button>
+        </div>
+
+        <!-- Card 2: English Speed Test -->
+        <div class="exam-type-card" id="card-exam-english">
+          <div class="card-icon">🇬🇧</div>
+          <h3>English Typing Test</h3>
+          <p>Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min)</p>
+          <ul class="exam-features">
+            <li>✓ Single Word Backspace Only</li>
+            <li>✓ Qualification: ≥30 Net WPM</li>
+            <li>✓ Printable Scorecard</li>
+          </ul>
+          <button type="button" class="btn btn-secondary btn-block btn-start-flow" data-type="english">
+            ▶️ Start English Test
+          </button>
+        </div>
+
+        <!-- Card 3: Hindi Speed Test -->
+        <div class="exam-type-card" id="card-exam-hindi">
+          <div class="card-icon">🇮🇳</div>
+          <h3>Hindi Typing Test</h3>
+          <p>Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min)</p>
+          <ul class="exam-features">
+            <li>✓ Mangal InScript, Remington Gail & Kruti Dev 010</li>
+            <li>✓ Qualification: ≥25 Net WPM</li>
+            <li>✓ Printable Scorecard</li>
+          </ul>
+          <button type="button" class="btn btn-secondary btn-block btn-start-flow" data-type="hindi">
+            ▶️ Start Hindi Test
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- View 2: Expanded Maximum View Examination Stage -->
+    <section id="view-typing" class="card" style="display: none;">
+      
+      <!-- Compact Top Header Bar (Phase Pill + Timer + Metrics) -->
+      <div class="exam-top-strip">
+        <div class="strip-left">
+          <span class="phase-badge-pill" id="phase-badge-pill">🔥 2-MIN WARMUP</span>
+          <span class="stage-name-text" id="stage-badge">Stage 1: English Typing Test</span>
+        </div>
+        <div class="strip-metrics">
+          <div class="strip-metric-item">
+            <span class="strip-lbl" id="label-timer-phase">Timer:</span>
+            <span class="strip-val timer-val" id="live-timer">02:00</span>
+          </div>
+          <div class="strip-metric-item">
+            <span class="strip-lbl">Gross:</span>
+            <span class="strip-val" id="live-gross-wpm">0.0</span>
+          </div>
+          <div class="strip-metric-item">
+            <span class="strip-lbl">Net:</span>
+            <span class="strip-val net-val" id="live-net-wpm">0.0</span>
+          </div>
+          <div class="strip-metric-item">
+            <span class="strip-lbl">Accuracy:</span>
+            <span class="strip-val" id="live-accuracy">0.0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Target Text Pane (Expanded Maximize View) -->
+      <div class="passage-section">
+        <div class="section-label">
+          <span>TARGET TEXT TO TYPE:</span>
+          <span id="label-passage-title">Standard Passage #1</span>
+        </div>
+        <div id="passage-container" class="passage-pane">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Candidate Typing Textarea (Expanded Maximize View) -->
+      <div class="typing-section">
+        <div class="section-label">
+          <span>CANDIDATE TYPING AREA:</span>
+          <span id="label-backspace-rule">Backspace: Single Word Only</span>
+        </div>
+        <textarea id="typing-input" class="typing-input-box" placeholder="Start typing here... Timer will begin automatically on your first keypress!" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="action-bar">
+        <button type="button" id="btn-reset-current-stage" class="btn btn-secondary">
+          🔄 Reset Phase
+        </button>
+        <button type="button" id="btn-submit-exam" class="btn btn-danger">
+          ⏹️ Submit Phase Early
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal 1: Candidate Registration Form -->
+  <div id="modal-registration" class="modal-overlay">
+    <div class="modal-box">
+      <div class="card-title">
+        <span>📋 Candidate Registration Form</span>
+        <button type="button" class="btn btn-secondary modal-close-btn">✕</button>
+      </div>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.2rem;">
+        Please fill in your details before proceeding to the examination hall.
+      </p>
+      <div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Full Candidate Name *</label>
+          <input type="text" id="reg-candidate-name" class="form-control" value="Rahul Sharma" placeholder="e.g. Rahul Sharma" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Mobile Number *</label>
+          <input type="text" id="reg-candidate-mobile" class="form-control" value="9876543210" placeholder="e.g. 9876543210" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label>Date of Birth (DOB) *</label>
+          <input type="text" id="reg-candidate-dob" class="form-control" value="15/08/1998" placeholder="DD/MM/YYYY (e.g. 15/08/1998)" required>
+        </div>
+        <button type="button" id="btn-confirm-registration" class="btn btn-primary btn-block" style="font-size: 1.05rem; padding: 0.9rem;">
+          Proceed to Examination Hall ▶️
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 1.5: Examination Instructions & Sequence Guide -->
+  <div id="modal-instructions" class="modal-overlay">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="card-title">
+        <span>📋 Examination Instructions & Guidelines</span>
+        <button type="button" class="btn btn-secondary modal-close-btn">✕</button>
+      </div>
+      <div style="background: var(--bg-input); padding: 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+        <h4 style="color: var(--accent-cyan); font-family: var(--font-brand); margin-bottom: 0.8rem;">
+          Candidate: <span id="inst-candidate-name">Rahul Sharma</span> (DOB: <span id="inst-candidate-dob">15/08/1998</span>)
+        </h4>
+        
+        <p style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem; color: #fff;">
+          Sequence of Examination:
+        </p>
+        
+        <ol style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; padding-left: 1.2rem;">
+          <li><strong>🔥 Step 1: 2-Minute Warmup Test</strong><br>Timer auto-starts on your FIRST keypress. Use this 2 minutes to test your keyboard keys and finger placement (score does not count on final certificate).</li>
+          <li style="margin-top: 0.5rem;"><strong>☕ Step 2: 2-Minute Mandatory Rest Break Interval</strong><br>Relax your hands and fingers for 2 minutes before the main exam.</li>
+          <li style="margin-top: 0.5rem;"><strong>⚡ Step 3: 10-Minute Actual Examination</strong><br>Timer auto-starts on your FIRST keypress. Evaluated for Speed (Required Cutoff: English ≥30 Net WPM, Hindi ≥25 Net WPM) & Accuracy. When times up, test auto-saves!</li>
+          <li style="margin-top: 0.5rem;"><strong>🖨️ Step 4: Printable Scorecard Certificate</strong><br>Clean single-page Black & White A4 Certificate with Candidate & Examiner signatures.</li>
+        </ol>
+      </div>
+      <button type="button" id="btn-start-after-instructions" class="btn btn-primary btn-block" style="font-size: 1.1rem; padding: 1rem;">
+        ▶️ I Have Read Instructions - Begin 2-Min Warmup Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal 2: 2-Minute Rest Break Screen -->
+  <div id="modal-break" class="modal-overlay">
+    <div class="modal-box" style="text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">☕</div>
+      <h2 style="color: var(--accent-cyan); font-family: var(--font-brand); margin-bottom: 0.5rem;" id="break-title">Warmup Completed! 2-Minute Rest Break</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" id="break-desc">
+        Relax your hands and fingers. The 10-minute Actual Examination will start automatically when rest break timer reaches 00:00.
+      </p>
+      <div style="font-size: 2.8rem; font-family: var(--font-mono); font-weight: 700; color: var(--accent-cyan);" id="break-timer-display">
+        02:00
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Stage Transition Screen (Between Eng & Hindi in Dual Test) -->
+  <div id="modal-transition" class="modal-overlay">
+    <div class="modal-box" style="text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
+      <h2 style="color: var(--accent-cyan); font-family: var(--font-brand); margin-bottom: 0.5rem;">English Stage Completed!</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+        You have completed the English typing test. Click below to start Stage 2 (Hindi Test: 2 Min Warmup → 2 Min Break → 10 Min Actual).
+      </p>
+      <button type="button" id="btn-start-stage-2" class="btn btn-primary btn-block" style="font-size: 1.05rem; padding: 0.9rem;">
+        ▶️ Begin Stage 2: Hindi Test
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal 3.5: Past Exam Scorecards & Results Repository Modal -->
+  <div id="modal-history" class="modal-overlay">
+    <div class="modal-box" style="max-width: 920px;">
+      <div class="card-title">
+        <span>📜 Past Exam Scorecards & Candidate Results Repository</span>
+        <button type="button" class="btn btn-secondary modal-close-btn">✕</button>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Re-open, view, and reprint scorecards for candidates who completed the examination.
+      </p>
+
+      <table class="a4-table" style="margin-bottom: 1.2rem;">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Candidate Name</th>
+            <th>DOB</th>
+            <th>Mobile</th>
+            <th>Security Signature Hash</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody">
+          <!-- Dynamically populated via JS -->
+        </tbody>
+      </table>
+
+      <div style="display: flex; justify-content: space-between;">
+        <button type="button" id="btn-clear-history" class="btn btn-danger" style="font-size: 0.85rem;">
+          🗑️ Clear All Past Records
+        </button>
+        <button type="button" class="btn btn-secondary modal-close-btn">
+          Close Repository
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Examiner Admin Settings Modal (admin123) -->
+  <div id="modal-admin" class="modal-overlay">
+    <div class="modal-box">
+      <div class="card-title">
+        <span>🔒 Examiner Admin Panel Settings</span>
+        <button type="button" class="btn btn-secondary modal-close-btn">✕</button>
+      </div>
+
+      <!-- Auth View -->
+      <div id="admin-auth-container">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Enter master password to access examiner admin panel (Default: <code>admin123</code>).
+        </p>
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label>Master Password</label>
+          <input type="password" id="input-admin-password" class="form-control" placeholder="admin123">
+        </div>
+        <button type="button" id="btn-confirm-admin-auth" class="btn btn-primary btn-block">
+          Unlock Admin Panel
+        </button>
+      </div>
+
+      <!-- Settings Dashboard (Unlocked Admin Panel) -->
+      <div id="admin-dashboard-container" style="display: none;">
+        
+        <div class="admin-section">
+          <h4>⚙️ Admin Panel Configurations</h4>
+
+          <!-- Qualification Status Toggle inside Admin Panel -->
+          <div class="form-group" style="margin-bottom: 1rem; background: var(--bg-input); padding: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--accent-cyan);">
+            <label style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.5rem;">Scorecard Qualification Status Display</label>
+            <select id="admin-toggle-qualification" class="form-control">
+              <option value="off" selected>OFF - Hide Qualified / Not Qualified (Default)</option>
+              <option value="on">ON - Show Qualified / Not Qualified</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label>Hindi Font Engine Layout</label>
+            <select id="admin-hindi-font-engine" class="form-control">
+              <option value="hi_inscript" selected>Hindi Mangal Unicode (InScript)</option>
+              <option value="hi_remington">Hindi Mangal Unicode (Remington Gail)</option>
+              <option value="hi_krutidev">Hindi Kruti Dev 010 (Legacy ANSI)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label>Backspace Restriction Rule (Default: Single Word Only)</label>
+            <select id="admin-select-backspace" class="form-control">
+              <option value="SingleWord" selected>Single Word Backspace Only (Default)</option>
+              <option value="FullAllowed">Full Backspace Allowed</option>
+              <option value="Disabled">Disabled (Strict Exam Mode)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h4>➕ Add Custom Passage</h4>
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label>Passage Title & Language</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="lesson-title" class="form-control" placeholder="Passage Title" style="flex: 2;">
+              <select id="lesson-lang" class="form-control" style="flex: 1;">
+                <option value="en_qwerty">English</option>
+                <option value="hi_inscript">Hindi Unicode</option>
+                <option value="hi_krutidev">Hindi Kruti Dev</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label>Text Content</label>
+            <textarea id="lesson-text" class="form-control" style="height: 90px;" placeholder="Paste passage text here..."></textarea>
+          </div>
+          <button type="button" id="btn-save-custom-lesson" class="btn btn-secondary btn-block">
+            💾 Save Custom Passage
+          </button>
+        </div>
+
+        <button type="button" id="btn-apply-admin-settings" class="btn btn-primary btn-block" style="font-size: 1.05rem; padding: 0.9rem;">
+          ✔️ Save & Apply Admin Settings
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal 5: Clean Single-Page A4 Scorecard PDF -->
+  <div id="modal-scorecard" class="modal-overlay">
+    <div class="modal-box bw-a4-scorecard" id="bw-scorecard-printable" style="max-width: 840px;">
+      <div class="card-title no-print">
+        <span>🏆 Typing Test</span>
+        <button type="button" class="btn btn-secondary modal-close-btn">✕</button>
+      </div>
+
+      <!-- Clean A4 Header -->
+      <div class="a4-header">
+        <div class="a4-logo">TYPING TEST</div>
+        <div class="a4-sub">Performance Scorecard</div>
+      </div>
+
+      <!-- Candidate Details Section -->
+      <table class="a4-table candidate-details-table">
+        <tr>
+          <td><strong>Candidate Name:</strong> <span id="sc-name">Rahul Sharma</span></td>
+          <td><strong>Date of Birth (DOB):</strong> <span id="sc-dob">15/08/1998</span></td>
+        </tr>
+        <tr>
+          <td><strong>Mobile Number:</strong> <span id="sc-mobile">9876543210</span></td>
+          <td><strong>Exam Date & Time:</strong> <span id="sc-date">2026-08-14</span></td>
+        </tr>
+      </table>
+
+      <!-- Qualification Status Banner (Controlled by Admin Panel Toggle) -->
+      <div id="sc-overall-status-box" style="text-align: center; font-size: 1.1rem; font-weight: 800; padding: 0.5rem; border: 2px solid #000; margin-bottom: 1rem; display: none;">
+        OVERALL RESULT: <span id="sc-overall-status">QUALIFIED</span>
+      </div>
+
+      <!-- Clean Examination Performance Table -->
+      <div class="a4-section-title">PERFORMANCE METRICS</div>
+      <table class="a4-table performance-table">
+        <thead>
+          <tr>
+            <th>Test Stage</th>
+            <th>Language & Font</th>
+            <th>Duration</th>
+            <th>Gross Speed</th>
+            <th>Net Speed</th>
+            <th>Accuracy</th>
+            <th id="col-head-status" style="display: none;">Result Status</th>
+          </tr>
+        </thead>
+        <tbody id="sc-results-tbody">
+          <!-- Dynamically populated via JS -->
+        </tbody>
+      </table>
+
+      <!-- Summary Keystrokes & Errors -->
+      <div class="a4-section-title">KEYSTROKE & ERROR SUMMARY</div>
+      <table class="a4-table error-summary-table">
+        <tr>
+          <td><strong>Total Keystrokes:</strong> <span id="sc-total-keystrokes">0</span></td>
+          <td><strong>Net Error Penalty:</strong> <span id="sc-total-penalty">0.0 Words</span></td>
+          <td><strong>Backspace Count:</strong> <span id="sc-backspace-count">0 Press</span></td>
+        </tr>
+      </table>
+
+      <!-- Signatures Block -->
+      <div class="signature-section">
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <div>Signature of Candidate</div>
+          <div class="sig-sub">(Name: <span id="sig-cand-name">Rahul Sharma</span>)</div>
+        </div>
+
+        <div class="sig-box stamp-box">
+          <div class="stamp-rect">[ EXAM STAMP ]</div>
+        </div>
+
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <div>Signature of Examiner</div>
+          <div class="sig-sub">Authorized Signatory</div>
+        </div>
+      </div>
+
+      <!-- Digital Security Verification Signature Footer -->
+      <div class="a4-security-footer" style="margin-top: 1.5rem; border-top: 1px dashed #94a3b8; padding-top: 0.5rem; display: flex; justify-content: space-between; font-size: 0.78rem; color: #475569;">
+        <span>🔒 Digital Verification Hash: <code id="sc-crypto-sig" style="font-family: var(--font-mono); font-weight: bold; color: #0284c7;">9f8a3c2b1d4e5f6a</code></span>
+        <span>Tamper-Proof Cryptographic Exam Certificate</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-bar no-print" style="margin-top: 1.5rem;">
+        <button type="button" id="btn-home-scorecard" class="btn btn-secondary">
+          🏠 Home
+        </button>
+        <button type="button" id="btn-print-scorecard" class="btn btn-primary" style="flex: 1;">
+          🖨️ Print PDF Scorecard
+        </button>
+        <button type="button" id="btn-export-json" class="btn btn-secondary">
+          📥 Export JSON
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="font-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

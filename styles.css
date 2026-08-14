@@ -1,0 +1,733 @@
+/* ==========================================================================
+   Typing Test Assessment Engine - Design Tokens & Styles
+   Streamlined 1-Line Strip & Expanded Maximum Typing Area Layout
+   ========================================================================== */
+
+:root {
+  /* Color Tokens */
+  --bg-main: #0b0f19;
+  --bg-card: #111827;
+  --bg-input: #1f2937;
+  
+  --border-color: #374151;
+  --border-focus: #0ea5e9;
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  
+  --accent-cyan: #0ea5e9;
+  --accent-blue: #2563eb;
+  
+  --color-correct: #10b981;
+  --color-error: #ef4444;
+  --color-active: #38bdf8;
+  
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-brand: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-hindi: 'Noto Serif Devanagari', 'Mangal', 'Kruti Dev 010', serif;
+  
+  /* Layout */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  
+  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Base Resets */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NO SCROLL EXAM EXPANDED MAXIMUM VIEW MODE */
+body.no-scroll-exam {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
+body.no-scroll-exam .main-content {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0.5rem 1.25rem !important;
+  height: calc(100vh - 65px) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+body.no-scroll-exam #view-typing {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 0.85rem 1.25rem !important;
+}
+
+body.no-scroll-exam .passage-pane {
+  max-height: 240px !important;
+  font-size: 1.3rem !important;
+  line-height: 1.9 !important;
+}
+
+body.no-scroll-exam .typing-input-box {
+  height: 210px !important;
+  font-size: 1.3rem !important;
+  line-height: 1.8 !important;
+}
+
+/* Header Navbar */
+.app-header {
+  height: 65px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.logo-icon {
+  font-size: 1.6rem;
+}
+
+.sub-brand {
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  font-weight: 500;
+}
+
+.header-controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Main Content Wrapper */
+.main-content {
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+/* Button UI Components */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--accent-cyan);
+  color: #000;
+}
+.btn-primary:hover {
+  background: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+.btn-secondary:hover {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.btn-danger {
+  background: var(--color-error);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Home Exam Cards Grid */
+.hero-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.hero-title {
+  font-family: var(--font-brand);
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.hero-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.exam-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.exam-type-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.exam-type-card.featured {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.2);
+}
+
+.card-badge {
+  position: absolute;
+  top: -12px;
+  right: 15px;
+  background: var(--accent-cyan);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.exam-features {
+  list-style: none;
+  margin: 1.2rem 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.exam-features li {
+  margin-bottom: 0.5rem;
+}
+
+/* COMPACT 1-LINE EXAM TOP STRIP */
+.exam-top-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.strip-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stage-name-text {
+  font-family: var(--font-brand);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.strip-metrics {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.strip-metric-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.strip-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.timer-val {
+  color: var(--accent-cyan);
+  font-size: 1.25rem;
+}
+
+.net-val {
+  color: var(--color-active);
+}
+
+.phase-badge-pill {
+  background: var(--accent-cyan);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Target Passage Pane */
+.passage-section {
+  margin-bottom: 0.6rem;
+}
+
+.section-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.passage-pane {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1rem;
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 1.25rem;
+  line-height: 1.8;
+  user-select: none;
+}
+
+.word-token {
+  display: inline-block;
+  padding: 0 3px;
+  margin: 2px;
+  border-radius: 3px;
+  color: var(--text-secondary);
+}
+
+.word-token.active {
+  background: rgba(56, 189, 248, 0.25);
+  color: var(--color-active);
+  border-bottom: 2px solid var(--color-active);
+}
+
+.word-token.correct {
+  color: var(--color-correct);
+}
+
+.word-token.error {
+  background: rgba(239, 68, 68, 0.25);
+  color: var(--color-error);
+  text-decoration: underline wavy var(--color-error);
+}
+
+/* Typing Textarea Input Box */
+.typing-section {
+  margin-bottom: 0.6rem;
+}
+
+.typing-input-box {
+  width: 100%;
+  height: 180px;
+  background: var(--bg-input);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1rem;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s ease;
+}
+
+.typing-input-box:focus {
+  border-color: var(--border-focus);
+}
+
+/* Hindi Font Class Modifier */
+.hindi-font {
+  font-family: var(--font-hindi) !important;
+  line-height: 2 !important;
+}
+
+/* Modal Overlay & Card Container */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-card);
+}
+
+/* PURE WHITE EXECUTIVE A4 SCORECARD CANVAS (SCREEN PREVIEW & PRINT) */
+.modal-box.bw-a4-scorecard {
+  background-color: #FFFFFF !important;
+  color: #0f172a !important;
+  border: 2px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+  padding: 2.2rem !important;
+  max-width: 840px !important;
+  width: 100% !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.bw-a4-scorecard .card-title {
+  color: #0f172a !important;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Clean Header */
+.a4-header {
+  text-align: center;
+  border-bottom: 2px dashed #94a3b8;
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.25rem;
+}
+
+.a4-logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #0f172a !important;
+}
+
+.a4-sub {
+  font-size: 0.88rem;
+  color: #475569 !important;
+  margin-top: 3px;
+}
+
+/* Section Title Headers */
+.a4-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  padding: 6px 10px;
+  margin: 1.2rem 0 0.6rem 0;
+  border-left: 4px solid #0284c7;
+  border-top: 1px solid #cbd5e1;
+  border-right: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+/* Clean Tabular Data Tables */
+.a4-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  color: #0f172a !important;
+}
+
+.a4-table th, .a4-table td {
+  border: 1px solid #cbd5e1 !important;
+  padding: 8px 12px;
+  text-align: left;
+  color: #0f172a !important;
+  background-color: #FFFFFF !important;
+}
+
+.a4-table th {
+  background-color: #f8fafc !important;
+  font-weight: 700;
+  color: #0f172a !important;
+}
+
+/* Candidate Details Table Styling */
+.candidate-details-table td {
+  width: 50%;
+  background-color: #ffffff !important;
+}
+
+/* Signatures Block */
+.signature-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+}
+
+.sig-box {
+  text-align: center;
+  width: 220px;
+  font-size: 0.85rem;
+  color: #0f172a !important;
+}
+
+.sig-line {
+  border-top: 1.5px solid #0f172a;
+  margin-bottom: 6px;
+}
+
+.sig-sub {
+  font-size: 0.78rem;
+  color: #64748b !important;
+}
+
+.stamp-box {
+  width: 150px;
+}
+
+.stamp-rect {
+  border: 1.5px dashed #64748b;
+  padding: 14px 8px;
+  font-size: 0.78rem;
+  font-weight: bold;
+  color: #64748b;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--text-secondary);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: var(--accent-cyan);
+}
+
+/* Action Bar */
+.action-bar {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
+   STRICT EXECUTIVE MONOCHROME PURE WHITE SINGLE-PAGE A4 PRINT STYLES (@media print)
+   ========================================================================== */
+
+@media print {
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 12mm 15mm;
+  }
+
+  html, body {
+    background: #FFFFFF !important;
+    background-image: none !important;
+    color: #000000 !important;
+    font-family: 'Inter', Arial, sans-serif !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body > *:not(#modal-scorecard) {
+    display: none !important;
+  }
+
+  #modal-scorecard {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #FFFFFF !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+
+  .modal-box.bw-a4-scorecard {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    border: 3px double #000000 !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 20px !important;
+    margin: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .a4-header {
+    text-align: center;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  .a4-logo {
+    font-size: 18pt;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #000000 !important;
+  }
+
+  .a4-sub {
+    font-size: 9.5pt;
+    color: #333333 !important;
+    margin-top: 3px;
+  }
+
+  .a4-section-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: #f1f5f9 !important;
+    color: #000000 !important;
+    padding: 5px 8px;
+    margin: 12px 0 6px 0;
+    border: 1px solid #000000;
+  }
+
+  .a4-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    font-size: 9pt;
+    color: #000000 !important;
+  }
+
+  .a4-table th, .a4-table td {
+    border: 1px solid #000000 !important;
+    padding: 6px 8px;
+    text-align: left;
+    color: #000000 !important;
+    background: #FFFFFF !important;
+  }
+
+  .a4-table th {
+    background: #e2e8f0 !important;
+    font-weight: 700;
+  }
+
+  .signature-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 40px;
+    padding-top: 10px;
+  }
+
+  .sig-box {
+    text-align: center;
+    width: 210px;
+    font-size: 9pt;
+    color: #000000 !important;
+  }
+
+  .sig-line {
+    border-top: 1px solid #000000;
+    margin-bottom: 5px;
+  }
+
+  .sig-sub {
+    font-size: 8pt;
+    color: #4b5563 !important;
+  }
+
+  .stamp-box {
+    width: 140px;
+  }
+
+  .stamp-rect {
+    border: 1px dashed #000000;
+    padding: 14px 5px;
+    font-size: 8pt;
+    font-weight: bold;
+  }
+}
