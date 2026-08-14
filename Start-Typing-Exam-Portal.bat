@@ -1,9 +1,10 @@
 @echo off
-TITLE Antigravity Official Typing Assessment Portal Launcher
+TITLE Official Typing Assessment Portal Launcher
 COLOR 0A
 
+cls
 echo =======================================================================
-echo          ANTIGRAVITY OFFICIAL TYPING ASSESSMENT PORTAL
+echo          OFFICIAL TYPING ASSESSMENT PORTAL
 echo =======================================================================
 echo.
 

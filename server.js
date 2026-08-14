@@ -1,5 +1,5 @@
 /**
- * Antigravity Typing Exam Engine - Secure Localhost-Only Static HTTP Server
+ * Typing Exam Engine - Secure Localhost-Only Static HTTP Server
  * Strict Security Audit Compliant: Binds to 127.0.0.1, Security Headers & Zero Network Exposure
  */
 

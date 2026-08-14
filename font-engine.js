@@ -1,5 +1,5 @@
 /**
- * Antigravity Typing Exam Engine - Font & Keyboard Engine Module
+ * Typing Exam Engine - Font & Keyboard Engine Module
  * Robust Devanagari Unicode & ANSI Keymap Translator
  */
 

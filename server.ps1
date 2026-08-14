@@ -1,4 +1,4 @@
-# Antigravity Built-in Zero-Dependency PowerShell HTTP Server
+# Built-in Zero-Dependency PowerShell HTTP Server
 # DevSecOps Hardened: Strict Security Headers & 127.0.0.1 Localhost Isolation
 
 $port = 3000
