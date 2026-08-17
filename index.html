@@ -43,7 +43,7 @@
     <section id="view-home" class="card">
       <div class="hero-header">
         <h1 class="hero-title">Typing Skill Assessment Portal</h1>
-        <p class="hero-subtitle">Dual-Language Assessment Engine (English QWERTY & Hindi Mangal / Kruti Dev)</p>
+        <p class="hero-subtitle">Dual-Language Assessment Engine (English QWERTY & Hindi Kruti Dev 010 / Mangal)</p>
       </div>
 
       <div class="exam-types-grid">
@@ -52,9 +52,10 @@
           <div class="card-badge">RECOMMENDED DUAL TEST</div>
           <div class="card-icon">🏆</div>
           <h3>Combined Dual Typing Test</h3>
-          <p>Sequence: Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min) [Eng & Hindi]</p>
+          <p>Sequence: Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min) [Eng & Hindi Kruti Dev 010]</p>
           <ul class="exam-features">
             <li>✓ Auto-selects random exam passage</li>
+            <li>✓ Default Hindi Engine: Kruti Dev 010</li>
             <li>✓ Single Word Backspace Only (Default)</li>
             <li>✓ Qualification: Eng ≥30 WPM, Hindi ≥25 WPM</li>
             <li>✓ Clean A4 Single-Page B&W Printable Scorecard</li>
@@ -79,13 +80,13 @@
           </button>
         </div>
 
-        <!-- Card 3: Hindi Speed Test -->
+        <!-- Card 3: Hindi Speed Test (Default: Kruti Dev 010) -->
         <div class="exam-type-card" id="card-exam-hindi">
           <div class="card-icon">🇮🇳</div>
-          <h3>Hindi Typing Test</h3>
+          <h3>Hindi Typing Test (Kruti Dev 010)</h3>
           <p>Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min)</p>
           <ul class="exam-features">
-            <li>✓ Mangal InScript, Remington Gail & Kruti Dev 010</li>
+            <li>✓ Kruti Dev 010 (Default), Remington Gail & InScript</li>
             <li>✓ Qualification: ≥25 Net WPM</li>
             <li>✓ Printable Scorecard</li>
           </ul>
@@ -321,11 +322,11 @@
           </div>
 
           <div class="form-group" style="margin-bottom: 0.8rem;">
-            <label>Hindi Font Engine Layout</label>
+            <label>Hindi Font Engine Layout (Default: Kruti Dev 010)</label>
             <select id="admin-hindi-font-engine" class="form-control">
-              <option value="hi_inscript" selected>Hindi Mangal Unicode (InScript)</option>
+              <option value="hi_krutidev" selected>Hindi Kruti Dev 010 (Default)</option>
               <option value="hi_remington">Hindi Mangal Unicode (Remington Gail)</option>
-              <option value="hi_krutidev">Hindi Kruti Dev 010 (Legacy ANSI)</option>
+              <option value="hi_inscript">Hindi Mangal Unicode (InScript)</option>
             </select>
           </div>
 
@@ -343,7 +344,7 @@
         <div class="admin-section">
           <h4>📚 Passage Database Management</h4>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
-            Passages are automatically & randomly selected for tests. You can manage or delete passages below:
+            Passages are automatically & randomly selected for tests. Manage or add custom passages below:
           </p>
 
           <table class="a4-table" style="font-size: 0.85rem; margin-bottom: 1rem;">
@@ -365,15 +366,16 @@
             <div style="display: flex; gap: 0.5rem;">
               <input type="text" id="lesson-title" class="form-control" placeholder="Passage Title" style="flex: 2;">
               <select id="lesson-lang" class="form-control" style="flex: 1;">
-                <option value="en_qwerty">English</option>
-                <option value="hi_inscript">Hindi Unicode</option>
-                <option value="hi_krutidev">Hindi Kruti Dev</option>
+                <option value="hi_krutidev" selected>Hindi (Kruti Dev 010)</option>
+                <option value="hi_remington">Hindi (Remington Gail)</option>
+                <option value="hi_inscript">Hindi (InScript)</option>
+                <option value="en_qwerty">English QWERTY</option>
               </select>
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 0.8rem;">
-            <label>Text Content *</label>
-            <textarea id="lesson-text" class="form-control" style="height: 90px;" placeholder="Paste passage text here..."></textarea>
+            <label>Text Content * (Renders in Hindi Font when Hindi Language Selected)</label>
+            <textarea id="lesson-text" class="form-control hindi-font" style="height: 90px;" placeholder="यहाँ हिन्दी पाठ दर्ज करें... (Type or paste Hindi passage text here)"></textarea>
           </div>
           <button type="button" id="btn-save-custom-lesson" class="btn btn-secondary btn-block">
             💾 Save Custom Passage to Database

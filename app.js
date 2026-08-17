@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * Automatic Random Passage Selector & Admin Passage Manager Engine
+ * Default Hindi Font Engine: Kruti Dev 010 (hi_krutidev) & Dynamic Language Text Area Controller
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,25 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return raw.substring(0, 16).toUpperCase();
     }
 
-    // --- 1. DEFAULT PASSAGE DATABASE (PERSISTED IN LOCALSTORAGE) ---
+    // --- 1. DEFAULT PASSAGE DATABASE (DEFAULT HINDI: KRUTI DEV 010) ---
     const defaultPassages = [
+        {
+            id: 'hi_krutidev_01',
+            title: 'Hindi Kruti Dev 010 Assessment Passage #1',
+            lang: 'hi_krutidev',
+            text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
+        },
         {
             id: 'en_standard_01',
             title: 'English Judicial & Administrative Passage #1',
             lang: 'en_qwerty',
             text: 'India is a sovereign, socialist, secular, democratic republic with a parliamentary system of governance. The Constitution was adopted by the Constituent Assembly on 26th November 1949 and came into effect on 26th January 1950. The High Court of Judicature has exclusive jurisdiction to hear appeal petitions arising from civil court decisions. Every citizen enjoys fundamental rights guaranteed under Part III of the Constitution.'
-        },
-        {
-            id: 'en_prose_02',
-            title: 'English Economic & Technological Passage #2',
-            lang: 'en_qwerty',
-            text: 'Economic growth in developing nations relies heavily on modern infrastructure, digital connectivity, and skilled human resources. Transportation networks facilitate efficient trade and distribution of industrial goods across domestic and international markets. Public sector investment in renewable energy projects continues to accelerate technological innovation.'
-        },
-        {
-            id: 'hi_inscript_01',
-            title: 'Hindi Devanagari Standard Passage #1 (Unicode InScript)',
-            lang: 'hi_inscript',
-            text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ। उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के संरक्षण हेतु याचिकाएं स्वीकार करने का पूर्ण अधिकार है।'
         },
         {
             id: 'hi_remington_01',
@@ -59,10 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
             text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है। जनहित याचिकाओं के माध्यम से आम नागरिकों को त्वरित न्याय सुलभ कराया जाता है।'
         },
         {
-            id: 'hi_krutidev_01',
-            title: 'Hindi Kruti Dev 010 Assessment Passage #1 (Legacy ANSI)',
-            lang: 'hi_krutidev',
-            text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
+            id: 'hi_inscript_01',
+            title: 'Hindi Devanagari Standard Passage #3 (Unicode InScript)',
+            lang: 'hi_inscript',
+            text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ। उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के संरक्षण हेतु याचिकाएं स्वीकार करने का पूर्ण अधिकार है।'
+        },
+        {
+            id: 'en_prose_02',
+            title: 'English Economic & Technological Passage #2',
+            lang: 'en_qwerty',
+            text: 'Economic growth in developing nations relies heavily on modern infrastructure, digital connectivity, and skilled human resources. Transportation networks facilitate efficient trade and distribution of industrial goods across domestic and international markets. Public sector investment in renewable energy projects continues to accelerate technological innovation.'
         }
     ];
 
@@ -93,10 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (matching.length === 0) {
-            // Fallback default passage
             return {
                 id: 'fallback_01',
-                title: targetLang.startsWith('hi_') ? 'Hindi Assessment Passage' : 'English Assessment Passage',
+                title: targetLang.startsWith('hi_') ? 'Hindi Kruti Dev Passage' : 'English Assessment Passage',
                 lang: targetLang,
                 text: targetLang.startsWith('hi_')
                     ? 'भारत एक समृद्ध और विविधताओं से भरा देश है। यहाँ की संस्कृति और भाषाएँ विश्व भर में प्रसिद्ध हैं।'
@@ -122,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         admin: {
             isUnlocked: false,
-            hindiFontEngine: 'hi_inscript',
+            hindiFontEngine: 'hi_krutidev', // DEFAULT HINDI ENGINE: Kruti Dev 010
             showQualificationStatus: false
         },
         config: {
@@ -219,6 +218,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalAdmin = document.getElementById('modal-admin');
     const modalScorecard = document.getElementById('modal-scorecard');
 
+    const lessonLangSelect = document.getElementById('lesson-lang');
+    const lessonTextArea = document.getElementById('lesson-text');
+
+    // DYNAMIC FONT SWITCHING ON ADMIN LESSON TEXT AREA
+    if (lessonLangSelect && lessonTextArea) {
+        lessonLangSelect.addEventListener('change', () => {
+            const val = lessonLangSelect.value;
+            if (val.startsWith('hi_')) {
+                lessonTextArea.classList.add('hindi-font');
+                lessonTextArea.placeholder = 'यहाँ हिन्दी पाठ दर्ज करें... (Type or paste Hindi passage text here)';
+            } else {
+                lessonTextArea.classList.remove('hindi-font');
+                lessonTextArea.placeholder = 'Type or paste English passage text here...';
+            }
+        });
+    }
+
     // --- 4. NAVIGATION & HOME CONTROLLER ---
     function closeAllModals() {
         if (modalRegistration) modalRegistration.classList.remove('open');
@@ -304,17 +320,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. EXAM SEQUENCE CONTROLLER (WITH AUTOMATIC PASSAGE SELECTION) ---
+    // --- 5. EXAM SEQUENCE CONTROLLER (DEFAULT HINDI: KRUTI DEV 010) ---
     function setupExamSequence() {
         state.completedResults = [];
         state.sequence.activeStageIndex = 0;
 
         const mode = state.config.examMode || 'combined';
+        const defaultHindiEngine = state.admin.hindiFontEngine || 'hi_krutidev';
 
         if (mode === 'combined') {
             state.sequence.stages = [
                 { stageName: 'Stage 1: English Typing Test', lang: 'en_qwerty' },
-                { stageName: 'Stage 2: Hindi Typing Test', lang: state.admin.hindiFontEngine || 'hi_inscript' }
+                { stageName: `Stage 2: Hindi Typing Test (${defaultHindiEngine === 'hi_krutidev' ? 'Kruti Dev 010' : (defaultHindiEngine === 'hi_remington' ? 'Remington Gail' : 'InScript')})`, lang: defaultHindiEngine }
             ];
         } else if (mode === 'english') {
             state.sequence.stages = [
@@ -322,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
         } else {
             state.sequence.stages = [
-                { stageName: 'Hindi Typing Test', lang: state.admin.hindiFontEngine || 'hi_inscript' }
+                { stageName: `Hindi Typing Test (${defaultHindiEngine === 'hi_krutidev' ? 'Kruti Dev 010' : (defaultHindiEngine === 'hi_remington' ? 'Remington Gail' : 'InScript')})`, lang: defaultHindiEngine }
             ];
         }
 
@@ -338,7 +355,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const stageConfig = state.sequence.stages[state.sequence.activeStageIndex] || state.sequence.stages[0];
         const phaseName = state.sequence.activePhase || 'WARMUP';
         
-        // WARMUP: 120 seconds (2 Minutes), ACTUAL: 600 seconds (10 Minutes)
         const phaseDurationSecs = phaseName === 'WARMUP' ? 120 : 600;
 
         if (state.exam.intervalId) clearInterval(state.exam.intervalId);
@@ -358,7 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
             activeSignature: ''
         };
 
-        // AUTOMATIC PASSAGE SELECTION ENGINE
         const passageObj = getAutoSelectedPassage(stageConfig.lang);
         state.exam.targetText = passageObj.text;
         state.exam.targetTokens = passageObj.text.trim().split(/\s+/);
@@ -1041,9 +1056,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         passageDatabase.forEach((p, idx) => {
             const tr = document.createElement('tr');
-            const langLabel = p.lang === 'en_qwerty' ? 'English QWERTY' : (p.lang === 'hi_inscript' ? 'Hindi InScript' : (p.lang === 'hi_remington' ? 'Hindi Remington' : 'Hindi Kruti Dev'));
+            const isHindi = p.lang.startsWith('hi_');
+            const langLabel = p.lang === 'hi_krutidev' ? 'Hindi (Kruti Dev 010)' : (p.lang === 'hi_remington' ? 'Hindi (Remington Gail)' : (p.lang === 'hi_inscript' ? 'Hindi (InScript)' : 'English QWERTY'));
+            
             tr.innerHTML = `
-                <td><strong>${p.title}</strong></td>
+                <td class="${isHindi ? 'hindi-font' : ''}"><strong>${p.title}</strong></td>
                 <td>${langLabel}</td>
                 <td>
                     <button type="button" class="btn btn-danger btn-delete-passage" data-index="${idx}" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
@@ -1091,7 +1108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const title = elTitle ? elTitle.value.trim() : '';
             const text = elText ? elText.value.trim() : '';
-            const lang = elLang ? elLang.value : 'en_qwerty';
+            const lang = elLang ? elLang.value : 'hi_krutidev';
 
             if (!title || !text) {
                 alert('Please enter both Title and Text.');
