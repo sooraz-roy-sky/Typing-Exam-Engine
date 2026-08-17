@@ -87,7 +87,7 @@ const FontEngine = (function () {
         '0171': '’’',
         '0197': 'ऋ',
         '0199': 'क्र',
-        '0200': 'फ्र',
+        '0200': 'फ',
         '0201': 'ज्ञ',
         '0202': 'त्र',
         '0203': 'क्ष',
@@ -202,7 +202,7 @@ const FontEngine = (function () {
             }
         }
 
-        return tokens.join('');
+        return tokens.join('').normalize('NFC');
     }
 
     function mapKeyToHindi(key, layout) {

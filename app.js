@@ -235,15 +235,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const mappedChar = FontEngine.resolveAltCode(code);
         if (mappedChar && typingInput) {
-            insertTextAtCursor(typingInput, mappedChar);
+            const stageConfig = state.sequence.stages[state.sequence.activeStageIndex] || state.sequence.stages[0];
+            if (stageConfig.lang.startsWith('hi_')) {
+                state.exam.rawKrutiKeystrokes += mappedChar;
+                state.exam.typedText = FontEngine.convertKrutiDevToUnicode(state.exam.rawKrutiKeystrokes);
+                typingInput.value = state.exam.typedText;
+            } else {
+                insertTextAtCursor(typingInput, mappedChar);
+                state.exam.typedText = typingInput.value;
+            }
             if (!state.exam.hasStarted) startTimer();
             state.exam.totalKeystrokes++;
-            state.exam.typedText = typingInput.value;
             evaluateMatching();
             updateMetrics();
             checkEarlyPassageCompletion();
         }
         altCodeTracker.buffer = '';
+    }
+
+    function insertTextAtCursor(inputEl, text) {
+        const startPos = inputEl.selectionStart;
+        const endPos = inputEl.selectionEnd;
+        const value = inputEl.value;
+
+        inputEl.value = value.substring(0, startPos) + text + value.substring(endPos);
+        inputEl.selectionStart = inputEl.selectionEnd = startPos + text.length;
     }
 
     // --- 3. DOM ELEMENTS ---
@@ -461,8 +477,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const passageObj = getAutoSelectedPassage(stageConfig.lang);
-        state.exam.targetText = passageObj.text;
-        state.exam.targetTokens = passageObj.text.trim().split(/\s+/);
+        state.exam.targetText = passageObj.text.normalize('NFC');
+        state.exam.targetTokens = state.exam.targetText.trim().split(/\s+/);
 
         passageContainer.innerHTML = '';
         state.exam.targetTokens.forEach((tokenText, idx) => {
@@ -675,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function checkEarlyPassageCompletion() {
         const typedText = state.exam.typedText;
-        const typedWords = typedText.trim() === '' ? [] : typedText.trim().split(/\s+/);
+        const typedWords = typedText.trim() === '' ? [] : typedText.trim().split(/ +/);
         const targetTokens = state.exam.targetTokens;
 
         if (typedWords.length >= targetTokens.length) {
@@ -717,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function evaluateMatching() {
         const typedText = state.exam.typedText;
-        const typedWords = typedText.trim() === '' ? [] : typedText.trim().split(/\s+/);
+        const typedWords = typedText.split(/ +/);
         const targetTokens = state.exam.targetTokens;
         const tokens = passageContainer.querySelectorAll('.word-token');
 
@@ -727,8 +743,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tokens.forEach((tokenSpan, idx) => {
             tokenSpan.className = 'word-token';
-            const targetWord = targetTokens[idx] || '';
-            const typedWord = typedWords[idx];
+            const targetWord = (targetTokens[idx] || '').normalize('NFC');
+            const typedWord = typedWords[idx] !== undefined ? typedWords[idx].normalize('NFC') : undefined;
 
             if (idx === typedWords.length - 1) {
                 tokenSpan.classList.add('active');
@@ -762,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        if (typedWords.length > targetTokens.length) {
+        if (typedWords.length > targetTokens.length && typedWords[typedWords.length - 1] !== '') {
             const extraWordsCount = typedWords.length - targetTokens.length;
             fullErr += extraWordsCount;
         }
@@ -832,7 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isQualified = netWpmVal >= cutoffWpm;
 
             const targetWords = state.exam.targetTokens;
-            const typedWords = state.exam.typedText.trim() === '' ? [] : state.exam.typedText.trim().split(/\s+/);
+            const typedWords = state.exam.typedText.split(/ +/);
             const errorAuditLog = [];
 
             targetWords.forEach((targetWord, idx) => {
