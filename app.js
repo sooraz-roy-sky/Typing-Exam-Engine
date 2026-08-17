@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return raw.substring(0, 16).toUpperCase();
     }
 
-    // --- 1. DEFAULT PASSAGE DATABASE (ALL HINDI TITLES WRITTEN IN HINDI DEVANAGARI) ---
+    // --- 1. DEFAULT PASSAGE DATABASE (ALL HINDI TITLES WRITTEN IN DEVANAGARI HINDI) ---
     const defaultPassages = [
         {
             id: 'hi_krutidev_01',
@@ -71,16 +71,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const saved = localStorage.getItem('typing_passage_database');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                // Clean old English titles for Hindi passages if any
                 const sanitized = parsed.map(p => {
-                    if (p.id === 'hi_krutidev_01' && p.title.startsWith('Hindi')) p.title = 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)';
-                    if (p.id === 'hi_remington_01' && p.title.startsWith('Hindi')) p.title = 'हिन्दी न्यायपालिका गद्य पाठ #2 (रेमिंगटन गेल)';
-                    if (p.id === 'hi_inscript_01' && p.title.startsWith('Hindi')) p.title = 'हिन्दी प्रशासनिक मानक पाठ #3 (इनस्क्रिप्ट)';
+                    if (p.id === 'hi_krutidev_01') p.title = 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)';
+                    if (p.id === 'hi_remington_01') p.title = 'हिन्दी न्यायपालिका गद्य पाठ #2 (रेमिंगटन गेल)';
+                    if (p.id === 'hi_inscript_01') p.title = 'हिन्दी प्रशासनिक मानक पाठ #3 (इनस्क्रिप्ट)';
                     return p;
                 });
+                savePassageDatabase(sanitized);
                 return sanitized;
             }
         } catch (e) {}
+        savePassageDatabase(defaultPassages);
         return [...defaultPassages];
     }
 
@@ -96,10 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
      * AUTOMATIC PASSAGE SELECTOR ENGINE (PRIORITIZES KRUTI DEV 010 FOR HINDI)
      */
     function getAutoSelectedPassage(targetLang) {
-        // Try exact language match first (e.g. hi_krutidev)
+        // Priority 1: Exact language match (e.g. hi_krutidev)
         let matching = passageDatabase.filter(p => p.lang === targetLang);
 
-        // Fallback to any Hindi passage if no exact layout match
+        // Priority 2: Fallback to any Hindi passage if no exact layout match
         if (matching.length === 0 && targetLang.startsWith('hi_')) {
             matching = passageDatabase.filter(p => p.lang.startsWith('hi_'));
         }
