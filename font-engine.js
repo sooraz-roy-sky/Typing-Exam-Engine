@@ -158,6 +158,13 @@ const FontEngine = (function () {
             }
         }
 
+        // 2.5 Fix Half-Consonants followed by Vowel Matras (e.g. H + k -> भ् + ा -> भा)
+        for (let i = 0; i < tokens.length - 1; i++) {
+            if (tokens[i].endsWith('्') && /^[ािीुूृेैोौंःँ़]$/.test(tokens[i + 1])) {
+                tokens[i] = tokens[i].slice(0, -1);
+            }
+        }
+
         // 3. Fix Pre-Position Matra 'ि' (f in Kruti Dev):
         // Shift 'ि' from BEFORE consonant to AFTER consonant
         for (let i = 0; i < tokens.length; i++) {
