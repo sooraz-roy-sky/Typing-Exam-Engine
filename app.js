@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * Hindi Devanagari Passage Titles & Kruti Dev 010 Priority Engine
+ * Strict Kruti Dev 010 Auto-Selection Engine for All Hindi Tests
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return raw.substring(0, 16).toUpperCase();
     }
 
-    // --- 1. DEFAULT PASSAGE DATABASE (ALL HINDI TITLES WRITTEN IN DEVANAGARI HINDI) ---
+    // --- 1. DEFAULT PASSAGE DATABASE (PRIORITIZED KRUTI DEV 010 DEVANAGARI PASSAGES) ---
     const defaultPassages = [
         {
             id: 'hi_krutidev_01',
@@ -41,16 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
             text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
         },
         {
-            id: 'hi_remington_01',
-            title: 'हिन्दी न्यायपालिका गद्य पाठ #2 (रेमिंगटन गेल)',
-            lang: 'hi_remington',
-            text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है। जनहित याचिकाओं के माध्यम से आम नागरिकों को त्वरित न्याय सुलभ कराया जाता है।'
+            id: 'hi_krutidev_02',
+            title: 'हिन्दी उच्च न्यायालय निर्णय पाठ #2 (कृतिदेव 010)',
+            lang: 'hi_krutidev',
+            text: 'लोकतंत्र में स्वतंत्र न्यायपालिका की भूमिका अत्यंत महत्वपूर्ण होती है। संविधान के अनुच्छेद २२६ के अंतर्गत उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के प्रवर्तन हेतु निर्देश जारी करने का व्यापक अधिकार प्राप्त है।'
         },
         {
-            id: 'hi_inscript_01',
-            title: 'हिन्दी प्रशासनिक मानक पाठ #3 (इनस्क्रिप्ट)',
-            lang: 'hi_inscript',
-            text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ। उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के संरक्षण हेतु याचिकाएं स्वीकार करने का पूर्ण अधिकार है।'
+            id: 'hi_krutidev_03',
+            title: 'हिन्दी प्रशासनिक सेवा गद्य पाठ #3 (कृतिदेव 010)',
+            lang: 'hi_krutidev',
+            text: 'सरकारी सेवाओं में दक्षता एवं पारदर्शिता बनाए रखना अति आवश्यक है। भर्ती परीक्षाओं में कंप्यूटर आधारित टंकण परीक्षण अभ्यर्थियों की गति एवं सटीकता का सटीक मूल्यांकन करता है।'
         },
         {
             id: 'en_standard_01',
@@ -63,6 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'English Economic & Technological Passage #2',
             lang: 'en_qwerty',
             text: 'Economic growth in developing nations relies heavily on modern infrastructure, digital connectivity, and skilled human resources. Transportation networks facilitate efficient trade and distribution of industrial goods across domestic and international markets. Public sector investment in renewable energy projects continues to accelerate technological innovation.'
+        },
+        {
+            id: 'hi_remington_01',
+            title: 'हिन्दी न्यायपालिका गद्य पाठ (रेमिंगटन गेल)',
+            lang: 'hi_remington',
+            text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है।'
+        },
+        {
+            id: 'hi_inscript_01',
+            title: 'हिन्दी प्रशासनिक मानक पाठ (इनस्क्रिप्ट)',
+            lang: 'hi_inscript',
+            text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ।'
         }
     ];
 
@@ -71,10 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const saved = localStorage.getItem('typing_passage_database');
             if (saved) {
                 const parsed = JSON.parse(saved);
+                // Ensure Kruti Dev passages exist and have proper Devanagari titles
+                let hasKrutiDev = parsed.some(p => p.lang === 'hi_krutidev');
+                if (!hasKrutiDev) {
+                    savePassageDatabase(defaultPassages);
+                    return [...defaultPassages];
+                }
                 const sanitized = parsed.map(p => {
                     if (p.id === 'hi_krutidev_01') p.title = 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)';
-                    if (p.id === 'hi_remington_01') p.title = 'हिन्दी न्यायपालिका गद्य पाठ #2 (रेमिंगटन गेल)';
-                    if (p.id === 'hi_inscript_01') p.title = 'हिन्दी प्रशासनिक मानक पाठ #3 (इनस्क्रिप्ट)';
+                    if (p.id === 'hi_remington_01') p.title = 'हिन्दी न्यायपालिका गद्य पाठ (रेमिंगटन गेल)';
+                    if (p.id === 'hi_inscript_01') p.title = 'हिन्दी प्रशासनिक मानक पाठ (इनस्क्रिप्ट)';
                     return p;
                 });
                 savePassageDatabase(sanitized);
@@ -94,25 +112,35 @@ document.addEventListener('DOMContentLoaded', () => {
     let passageDatabase = loadPassageDatabase();
 
     /**
-     * AUTOMATIC PASSAGE SELECTOR ENGINE (PRIORITIZES KRUTI DEV 010 FOR HINDI)
+     * STRICT AUTOMATIC PASSAGE SELECTOR ENGINE:
+     * For Hindi tests, strictly prioritizes Kruti Dev 010 (hi_krutidev) passages!
      */
     function getAutoSelectedPassage(targetLang) {
-        // Priority 1: Exact language match (e.g. hi_krutidev)
-        let matching = passageDatabase.filter(p => p.lang === targetLang);
+        // If target is any Hindi layout, strictly prefer hi_krutidev unless specified otherwise
+        let effectiveTarget = targetLang;
+        if (targetLang.startsWith('hi_') && state.admin.hindiFontEngine === 'hi_krutidev') {
+            effectiveTarget = 'hi_krutidev';
+        }
 
-        // Priority 2: Fallback to any Hindi passage if no exact layout match
-        if (matching.length === 0 && targetLang.startsWith('hi_')) {
+        // Priority 1: Exact layout match (e.g. hi_krutidev)
+        let matching = passageDatabase.filter(p => p.lang === effectiveTarget);
+
+        // Priority 2: Fallback to any hi_krutidev passages if available
+        if (matching.length === 0 && effectiveTarget.startsWith('hi_')) {
+            matching = passageDatabase.filter(p => p.lang === 'hi_krutidev');
+        }
+
+        // Priority 3: Fallback to any Hindi passage
+        if (matching.length === 0 && effectiveTarget.startsWith('hi_')) {
             matching = passageDatabase.filter(p => p.lang.startsWith('hi_'));
         }
 
         if (matching.length === 0) {
             return {
-                id: 'fallback_01',
-                title: targetLang.startsWith('hi_') ? 'हिन्दी मूल्यांकन पाठ (कृतिदेव 010)' : 'English Assessment Passage',
-                lang: targetLang,
-                text: targetLang.startsWith('hi_')
-                    ? 'भारत एक समृद्ध और विविधताओं से भरा देश है। यहाँ की संस्कृति और भाषाएँ विश्व भर में प्रसिद्ध हैं।'
-                    : 'The Constitution of India guarantees fundamental rights to all citizens to ensure freedom, equality, and justice.'
+                id: 'fallback_krutidev',
+                title: 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)',
+                lang: 'hi_krutidev',
+                text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
             };
         }
 
@@ -139,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         admin: {
             isUnlocked: false,
-            hindiFontEngine: 'hi_krutidev', // DEFAULT HINDI ENGINE: Kruti Dev 010
+            hindiFontEngine: 'hi_krutidev', // STRICT DEFAULT HINDI ENGINE: Kruti Dev 010
             showQualificationStatus: false,
             fastForwardTestingMode: true // DEFAULT TESTING MODE: ON
         },
