@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * Full Kruti Dev 010 / Remington Gail Alt Code Shortcuts Real-Time Engine
+ * Default Hindi Engine: Kruti Dev 010 & Dynamic Hindi/English Passage Title & Text Controller
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,11 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return raw.substring(0, 16).toUpperCase();
     }
 
-    // --- 1. DEFAULT PASSAGE DATABASE (PERSISTED IN LOCALSTORAGE) ---
+    // --- 1. DEFAULT PASSAGE DATABASE (DEFAULT HINDI ENGINE: KRUTI DEV 010) ---
     const defaultPassages = [
         {
             id: 'hi_krutidev_01',
-            title: 'Hindi Kruti Dev 010 Assessment Passage #1',
+            title: 'हिन्दी कृतिदेव 010 मूल्यांकन पाठ #1',
             lang: 'hi_krutidev',
             text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
         },
@@ -48,13 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             id: 'hi_remington_01',
-            title: 'Hindi Judiciary Prose Passage #2 (Remington Gail)',
+            title: 'हिन्दी रेमिंगटन गेल गद्य पाठ #2',
             lang: 'hi_remington',
             text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है। जनहित याचिकाओं के माध्यम से आम नागरिकों को त्वरित न्याय सुलभ कराया जाता है।'
         },
         {
             id: 'hi_inscript_01',
-            title: 'Hindi Devanagari Standard Passage #3 (Unicode InScript)',
+            title: 'हिन्दी इनस्क्रिप्ट मानक पाठ #3',
             lang: 'hi_inscript',
             text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ। उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के संरक्षण हेतु याचिकाएं स्वीकार करने का पूर्ण अधिकार है।'
         },
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (matching.length === 0) {
             return {
                 id: 'fallback_01',
-                title: targetLang.startsWith('hi_') ? 'Hindi Kruti Dev Passage' : 'English Assessment Passage',
+                title: targetLang.startsWith('hi_') ? 'हिन्दी पाठ' : 'English Assessment Passage',
                 lang: targetLang,
                 text: targetLang.startsWith('hi_')
                     ? 'भारत एक समृद्ध और विविधताओं से भरा देश है। यहाँ की संस्कृति और भाषाएँ विश्व भर में प्रसिद्ध हैं।'
@@ -248,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSkipWarmup = document.getElementById('btn-skip-warmup');
     const btnSkipBreak = document.getElementById('btn-skip-break');
 
+    const lessonTitleInput = document.getElementById('lesson-title');
     const lessonLangSelect = document.getElementById('lesson-lang');
     const lessonTextArea = document.getElementById('lesson-text');
 
@@ -257,15 +258,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (lessonLangSelect && lessonTextArea) {
+    // DYNAMIC FONT SWITCHING ON BOTH TITLE AND TEXTAREA WHEN LANGUAGE DROPDOWN CHANGES
+    if (lessonLangSelect) {
         lessonLangSelect.addEventListener('change', () => {
             const val = lessonLangSelect.value;
             if (val.startsWith('hi_')) {
-                lessonTextArea.classList.add('hindi-font');
-                lessonTextArea.placeholder = 'यहाँ हिन्दी पाठ दर्ज करें... (Type or paste Hindi passage text here)';
+                if (lessonTitleInput) {
+                    lessonTitleInput.classList.add('hindi-font');
+                    lessonTitleInput.placeholder = 'Passage Title (शीर्षक)';
+                }
+                if (lessonTextArea) {
+                    lessonTextArea.classList.add('hindi-font');
+                    lessonTextArea.placeholder = 'यहाँ हिन्दी पाठ दर्ज करें... (Type or paste Hindi passage text here)';
+                }
             } else {
-                lessonTextArea.classList.remove('hindi-font');
-                lessonTextArea.placeholder = 'Type or paste English passage text here...';
+                if (lessonTitleInput) {
+                    lessonTitleInput.classList.remove('hindi-font');
+                    lessonTitleInput.placeholder = 'Passage Title';
+                }
+                if (lessonTextArea) {
+                    lessonTextArea.classList.remove('hindi-font');
+                    lessonTextArea.placeholder = 'Type or paste English passage text here...';
+                }
             }
         });
     }
@@ -474,7 +488,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elStageBadge) elStageBadge.textContent = `${stageConfig.stageName} (${phaseTitle})`;
 
         const elPassageTitle = document.getElementById('label-passage-title');
-        if (elPassageTitle) elPassageTitle.textContent = `${passageObj.title} [Auto-Selected]`;
+        if (elPassageTitle) {
+            elPassageTitle.textContent = `${passageObj.title} [Auto-Selected]`;
+            if (stageConfig.lang.startsWith('hi_')) {
+                elPassageTitle.classList.add('hindi-font');
+            } else {
+                elPassageTitle.classList.remove('hindi-font');
+            }
+        }
 
         const elBackspaceRule = document.getElementById('label-backspace-rule');
         if (elBackspaceRule) elBackspaceRule.textContent = `Backspace: ${state.config.backspaceRule}`;
@@ -1071,10 +1092,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 combinedPenalty += parseFloat(res.netPenalty);
                 combinedBackspace += res.backspaceCount;
 
+                const langLabel = res.lang === 'hi_krutidev' ? 'Hindi (Kruti Dev 010)' : (res.lang === 'hi_remington' ? 'Hindi (Remington Gail)' : (res.lang === 'hi_inscript' ? 'Hindi (InScript)' : 'English QWERTY'));
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${res.stageName}</strong></td>
-                    <td>${res.lang}</td>
+                    <td>${langLabel}</td>
                     <td>${res.durationMins}</td>
                     <td>${res.grossWpm} WPM</td>
                     <td><strong>${res.netWpm} WPM</strong></td>
@@ -1094,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalScorecard) modalScorecard.classList.add('open');
     }
 
-    // --- 10. EXAMINER ADMIN CONTROLLER & FAST-FORWARD TESTING TOGGLE ---
+    // --- 10. EXAMINER ADMIN CONTROLLER & PASSAGE DATABASE MANAGER ---
     const btnAdminModal = document.getElementById('btn-admin-modal');
     if (btnAdminModal) {
         btnAdminModal.addEventListener('click', () => {
