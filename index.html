@@ -146,8 +146,11 @@
         <textarea id="typing-input" class="typing-input-box" placeholder="Start typing here... Timer will begin automatically on your first keypress!" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
       </div>
 
-      <!-- Action Bar -->
+      <!-- Action Bar (With Fast-Forward Testing Skip Controls) -->
       <div class="action-bar">
+        <button type="button" id="btn-skip-warmup" class="btn btn-primary" style="background: var(--accent-cyan); color: #000;">
+          ⏩ Skip Warmup Phase
+        </button>
         <button type="button" id="btn-reset-current-stage" class="btn btn-secondary">
           🔄 Reset Phase
         </button>
@@ -218,7 +221,7 @@
     </div>
   </div>
 
-  <!-- Modal 2: 2-Minute Rest Break Screen -->
+  <!-- Modal 2: 2-Minute Rest Break Screen (With Fast-Forward Skip Button) -->
   <div id="modal-break" class="modal-overlay">
     <div class="modal-box" style="text-align: center;">
       <div style="font-size: 3rem; margin-bottom: 0.5rem;">☕</div>
@@ -226,9 +229,12 @@
       <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" id="break-desc">
         Relax your hands and fingers. The 10-minute Actual Examination will start automatically when rest break timer reaches 00:00.
       </p>
-      <div style="font-size: 2.8rem; font-family: var(--font-mono); font-weight: 700; color: var(--accent-cyan);" id="break-timer-display">
+      <div style="font-size: 2.8rem; font-family: var(--font-mono); font-weight: 700; color: var(--accent-cyan); margin-bottom: 1.5rem;" id="break-timer-display">
         02:00
       </div>
+      <button type="button" id="btn-skip-break" class="btn btn-primary btn-block" style="font-size: 1.05rem; padding: 0.85rem;">
+        ⏩ Skip Rest Break & Begin 10-Min Actual Exam Now
+      </button>
     </div>
   </div>
 
@@ -312,9 +318,18 @@
         <div class="admin-section">
           <h4>⚙️ Admin Panel Configurations</h4>
 
-          <!-- Qualification Status Toggle inside Admin Panel -->
+          <!-- Fast-Forward Testing Skip Controls Toggle -->
           <div class="form-group" style="margin-bottom: 1rem; background: var(--bg-input); padding: 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--accent-cyan);">
-            <label style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.5rem;">Scorecard Qualification Status Display</label>
+            <label style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.5rem;">Fast-Forward Testing Mode (Enable Skip Buttons)</label>
+            <select id="admin-toggle-fast-forward" class="form-control">
+              <option value="on" selected>ON - Show Skip Warmup & Skip Rest Break Buttons (Default Testing Mode)</option>
+              <option value="off">OFF - Hide Skip Buttons (Strict Official Candidate Exam Mode)</option>
+            </select>
+          </div>
+
+          <!-- Qualification Status Toggle -->
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Scorecard Qualification Status Display</label>
             <select id="admin-toggle-qualification" class="form-control">
               <option value="off" selected>OFF - Hide Qualified / Not Qualified (Default)</option>
               <option value="on">ON - Show Qualified / Not Qualified</option>

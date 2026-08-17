@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * Default Hindi Font Engine: Kruti Dev 010 (hi_krutidev) & Dynamic Language Text Area Controller
+ * Early Access Fast-Forward Testing Overrides (Skip Warmup & Skip Rest Break Controllers)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return raw.substring(0, 16).toUpperCase();
     }
 
-    // --- 1. DEFAULT PASSAGE DATABASE (DEFAULT HINDI: KRUTI DEV 010) ---
+    // --- 1. DEFAULT PASSAGE DATABASE (PERSISTED IN LOCALSTORAGE) ---
     const defaultPassages = [
         {
             id: 'hi_krutidev_01',
@@ -82,10 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let passageDatabase = loadPassageDatabase();
 
-    /**
-     * AUTOMATIC PASSAGE SELECTOR ENGINE:
-     * Selects a random passage matching the target language (en_qwerty or hi_*).
-     */
     function getAutoSelectedPassage(targetLang) {
         const matching = passageDatabase.filter(p => {
             if (targetLang === 'en_qwerty') return p.lang === 'en_qwerty';
@@ -122,7 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         admin: {
             isUnlocked: false,
             hindiFontEngine: 'hi_krutidev', // DEFAULT HINDI ENGINE: Kruti Dev 010
-            showQualificationStatus: false
+            showQualificationStatus: false,
+            fastForwardTestingMode: true // DEFAULT EARLY ACCESS TESTING MODE: ON
         },
         config: {
             backspaceRule: 'SingleWord', // DEFAULT: Single Word Backspace Only
@@ -218,10 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalAdmin = document.getElementById('modal-admin');
     const modalScorecard = document.getElementById('modal-scorecard');
 
+    const btnSkipWarmup = document.getElementById('btn-skip-warmup');
+    const btnSkipBreak = document.getElementById('btn-skip-break');
+
     const lessonLangSelect = document.getElementById('lesson-lang');
     const lessonTextArea = document.getElementById('lesson-text');
 
-    // DYNAMIC FONT SWITCHING ON ADMIN LESSON TEXT AREA
     if (lessonLangSelect && lessonTextArea) {
         lessonLangSelect.addEventListener('change', () => {
             const val = lessonLangSelect.value;
@@ -232,6 +231,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 lessonTextArea.classList.remove('hindi-font');
                 lessonTextArea.placeholder = 'Type or paste English passage text here...';
             }
+        });
+    }
+
+    // --- FAST-FORWARD TESTING OVERRIDES ---
+    if (btnSkipWarmup) {
+        btnSkipWarmup.addEventListener('click', () => {
+            if (state.sequence.activePhase === 'WARMUP') {
+                finishPhaseInstance();
+            }
+        });
+    }
+
+    if (btnSkipBreak) {
+        btnSkipBreak.addEventListener('click', () => {
+            if (state.breakTimer.intervalId) clearInterval(state.breakTimer.intervalId);
+            if (modalBreak) modalBreak.classList.remove('open');
+            state.sequence.activePhase = 'ACTUAL';
+            startPhaseInstance();
         });
     }
 
@@ -320,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. EXAM SEQUENCE CONTROLLER (DEFAULT HINDI: KRUTI DEV 010) ---
+    // --- 5. EXAM SEQUENCE CONTROLLER ---
     function setupExamSequence() {
         state.completedResults = [];
         state.sequence.activeStageIndex = 0;
@@ -404,6 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const lblTimer = document.getElementById('label-timer-phase');
             if (lblTimer) lblTimer.textContent = 'Timer:';
+            if (btnSkipWarmup) btnSkipWarmup.style.display = state.admin.fastForwardTestingMode ? 'inline-flex' : 'none';
         } else {
             if (phasePill) {
                 phasePill.textContent = '⚡ 10-MIN ACTUAL EXAM';
@@ -411,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const lblTimer = document.getElementById('label-timer-phase');
             if (lblTimer) lblTimer.textContent = 'Timer:';
+            if (btnSkipWarmup) btnSkipWarmup.style.display = 'none';
         }
 
         const phaseTitle = phaseName === 'WARMUP' ? '2 Min Warmup' : '10 Min Actual Exam';
@@ -704,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 7. PHASE TRANSITIONS, MANDATORY 2-MIN REST & EXACT ACTUAL TIME SPEED EVALUATOR ---
+    // --- 7. PHASE TRANSITIONS & FAST-FORWARD REST BREAK ---
     async function finishPhaseInstance() {
         state.exam.isRunning = false;
         if (state.exam.intervalId) clearInterval(state.exam.intervalId);
@@ -828,13 +847,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // MANDATORY 2-MIN REST BREAK INTERVAL
     function startBreakInterval() {
         state.breakTimer.remainingSeconds = 120; // 2 Minutes
         const elTimerDisp = document.getElementById('break-timer-display');
         if (elTimerDisp) elTimerDisp.textContent = '02:00';
         
         if (modalBreak) modalBreak.classList.add('open');
+
+        if (btnSkipBreak) {
+            btnSkipBreak.style.display = state.admin.fastForwardTestingMode ? 'block' : 'none';
+        }
 
         if (state.breakTimer.intervalId) clearInterval(state.breakTimer.intervalId);
         state.breakTimer.intervalId = setInterval(() => {
@@ -1017,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalScorecard) modalScorecard.classList.add('open');
     }
 
-    // --- 10. EXAMINER ADMIN CONTROLLER & PASSAGE DATABASE MANAGER ---
+    // --- 10. EXAMINER ADMIN CONTROLLER & FAST-FORWARD TESTING TOGGLE ---
     const btnAdminModal = document.getElementById('btn-admin-modal');
     if (btnAdminModal) {
         btnAdminModal.addEventListener('click', () => {
@@ -1089,10 +1111,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const elHindiFont = document.getElementById('admin-hindi-font-engine');
             const elBackspace = document.getElementById('admin-select-backspace');
             const elToggleQual = document.getElementById('admin-toggle-qualification');
+            const elToggleFF = document.getElementById('admin-toggle-fast-forward');
 
             if (elHindiFont) state.admin.hindiFontEngine = elHindiFont.value;
             if (elBackspace) state.config.backspaceRule = elBackspace.value;
             if (elToggleQual) state.admin.showQualificationStatus = (elToggleQual.value === 'on');
+            if (elToggleFF) state.admin.fastForwardTestingMode = (elToggleFF.value === 'on');
 
             if (modalAdmin) modalAdmin.classList.remove('open');
             alert('✅ Admin Configurations successfully saved!');
