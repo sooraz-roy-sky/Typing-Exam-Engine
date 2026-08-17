@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * Default Hindi Engine: Kruti Dev 010 & Dynamic Hindi/English Passage Title & Text Controller
+ * Hindi Devanagari Passage Titles & Kruti Dev 010 Priority Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,31 +32,31 @@ document.addEventListener('DOMContentLoaded', () => {
         return raw.substring(0, 16).toUpperCase();
     }
 
-    // --- 1. DEFAULT PASSAGE DATABASE (DEFAULT HINDI ENGINE: KRUTI DEV 010) ---
+    // --- 1. DEFAULT PASSAGE DATABASE (ALL HINDI TITLES WRITTEN IN HINDI DEVANAGARI) ---
     const defaultPassages = [
         {
             id: 'hi_krutidev_01',
-            title: 'हिन्दी कृतिदेव 010 मूल्यांकन पाठ #1',
+            title: 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)',
             lang: 'hi_krutidev',
             text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
+        },
+        {
+            id: 'hi_remington_01',
+            title: 'हिन्दी न्यायपालिका गद्य पाठ #2 (रेमिंगटन गेल)',
+            lang: 'hi_remington',
+            text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है। जनहित याचिकाओं के माध्यम से आम नागरिकों को त्वरित न्याय सुलभ कराया जाता है।'
+        },
+        {
+            id: 'hi_inscript_01',
+            title: 'हिन्दी प्रशासनिक मानक पाठ #3 (इनस्क्रिप्ट)',
+            lang: 'hi_inscript',
+            text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ। उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के संरक्षण हेतु याचिकाएं स्वीकार करने का पूर्ण अधिकार है।'
         },
         {
             id: 'en_standard_01',
             title: 'English Judicial & Administrative Passage #1',
             lang: 'en_qwerty',
             text: 'India is a sovereign, socialist, secular, democratic republic with a parliamentary system of governance. The Constitution was adopted by the Constituent Assembly on 26th November 1949 and came into effect on 26th January 1950. The High Court of Judicature has exclusive jurisdiction to hear appeal petitions arising from civil court decisions. Every citizen enjoys fundamental rights guaranteed under Part III of the Constitution.'
-        },
-        {
-            id: 'hi_remington_01',
-            title: 'हिन्दी रेमिंगटन गेल गद्य पाठ #2',
-            lang: 'hi_remington',
-            text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है। जनहित याचिकाओं के माध्यम से आम नागरिकों को त्वरित न्याय सुलभ कराया जाता है।'
-        },
-        {
-            id: 'hi_inscript_01',
-            title: 'हिन्दी इनस्क्रिप्ट मानक पाठ #3',
-            lang: 'hi_inscript',
-            text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ। उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के संरक्षण हेतु याचिकाएं स्वीकार करने का पूर्ण अधिकार है।'
         },
         {
             id: 'en_prose_02',
@@ -69,7 +69,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadPassageDatabase() {
         try {
             const saved = localStorage.getItem('typing_passage_database');
-            if (saved) return JSON.parse(saved);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Clean old English titles for Hindi passages if any
+                const sanitized = parsed.map(p => {
+                    if (p.id === 'hi_krutidev_01' && p.title.startsWith('Hindi')) p.title = 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)';
+                    if (p.id === 'hi_remington_01' && p.title.startsWith('Hindi')) p.title = 'हिन्दी न्यायपालिका गद्य पाठ #2 (रेमिंगटन गेल)';
+                    if (p.id === 'hi_inscript_01' && p.title.startsWith('Hindi')) p.title = 'हिन्दी प्रशासनिक मानक पाठ #3 (इनस्क्रिप्ट)';
+                    return p;
+                });
+                return sanitized;
+            }
         } catch (e) {}
         return [...defaultPassages];
     }
@@ -82,16 +92,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let passageDatabase = loadPassageDatabase();
 
+    /**
+     * AUTOMATIC PASSAGE SELECTOR ENGINE (PRIORITIZES KRUTI DEV 010 FOR HINDI)
+     */
     function getAutoSelectedPassage(targetLang) {
-        const matching = passageDatabase.filter(p => {
-            if (targetLang === 'en_qwerty') return p.lang === 'en_qwerty';
-            return p.lang.startsWith('hi_') || p.lang === targetLang;
-        });
+        // Try exact language match first (e.g. hi_krutidev)
+        let matching = passageDatabase.filter(p => p.lang === targetLang);
+
+        // Fallback to any Hindi passage if no exact layout match
+        if (matching.length === 0 && targetLang.startsWith('hi_')) {
+            matching = passageDatabase.filter(p => p.lang.startsWith('hi_'));
+        }
 
         if (matching.length === 0) {
             return {
                 id: 'fallback_01',
-                title: targetLang.startsWith('hi_') ? 'हिन्दी पाठ' : 'English Assessment Passage',
+                title: targetLang.startsWith('hi_') ? 'हिन्दी मूल्यांकन पाठ (कृतिदेव 010)' : 'English Assessment Passage',
                 lang: targetLang,
                 text: targetLang.startsWith('hi_')
                     ? 'भारत एक समृद्ध और विविधताओं से भरा देश है। यहाँ की संस्कृति और भाषाएँ विश्व भर में प्रसिद्ध हैं।'
@@ -258,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // DYNAMIC FONT SWITCHING ON BOTH TITLE AND TEXTAREA WHEN LANGUAGE DROPDOWN CHANGES
     if (lessonLangSelect) {
         lessonLangSelect.addEventListener('change', () => {
             const val = lessonLangSelect.value;
@@ -490,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const elPassageTitle = document.getElementById('label-passage-title');
         if (elPassageTitle) {
             elPassageTitle.textContent = `${passageObj.title} [Auto-Selected]`;
-            if (stageConfig.lang.startsWith('hi_')) {
+            if (stageConfig.lang.startsWith('hi_') || passageObj.lang.startsWith('hi_')) {
                 elPassageTitle.classList.add('hindi-font');
             } else {
                 elPassageTitle.classList.remove('hindi-font');
