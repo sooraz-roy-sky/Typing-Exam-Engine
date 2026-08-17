@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * Strict Kruti Dev 010 Auto-Selection Engine for All Hindi Tests
+ * Hindi Devanagari Passage Titles & Kruti Dev 010 Priority Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'hi_krutidev_01',
             title: 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)',
             lang: 'hi_krutidev',
-            text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
+            text: 'भारत में डिजिटल तकनीक का तेजी से विस्तार हो रहा है जिसने देश के सामाजिक और आर्थिक स्वरूप को पूरी तरह से बदल दिया है। शिक्षा, स्वास्थ्य, बैंकिंग और सरकारी प्रशासन के क्षेत्र में इंटरनेट ने एक अभूतपूर्व क्रांति ला दी है। सरकारी सेवाओं को आम नागरिकों तक सीधे और पारदर्शी तरीके से पहुंचाने के लिए सैकड़ों ऑनलाइन पोर्टल और मोबाइल एप्लिकेशन शुरू किए गए हैं।'
         },
         {
             id: 'hi_krutidev_02',
@@ -63,18 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'English Economic & Technological Passage #2',
             lang: 'en_qwerty',
             text: 'Economic growth in developing nations relies heavily on modern infrastructure, digital connectivity, and skilled human resources. Transportation networks facilitate efficient trade and distribution of industrial goods across domestic and international markets. Public sector investment in renewable energy projects continues to accelerate technological innovation.'
-        },
-        {
-            id: 'hi_remington_01',
-            title: 'हिन्दी न्यायपालिका गद्य पाठ (रेमिंगटन गेल)',
-            lang: 'hi_remington',
-            text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है।'
-        },
-        {
-            id: 'hi_inscript_01',
-            title: 'हिन्दी प्रशासनिक मानक पाठ (इनस्क्रिप्ट)',
-            lang: 'hi_inscript',
-            text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ।'
         }
     ];
 
@@ -83,16 +71,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const saved = localStorage.getItem('typing_passage_database');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                // Ensure Kruti Dev passages exist and have proper Devanagari titles
                 let hasKrutiDev = parsed.some(p => p.lang === 'hi_krutidev');
                 if (!hasKrutiDev) {
                     savePassageDatabase(defaultPassages);
                     return [...defaultPassages];
                 }
                 const sanitized = parsed.map(p => {
-                    if (p.id === 'hi_krutidev_01') p.title = 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)';
-                    if (p.id === 'hi_remington_01') p.title = 'हिन्दी न्यायपालिका गद्य पाठ (रेमिंगटन गेल)';
-                    if (p.id === 'hi_inscript_01') p.title = 'हिन्दी प्रशासनिक मानक पाठ (इनस्क्रिप्ट)';
+                    if (p.id === 'hi_krutidev_01') {
+                        p.title = 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)';
+                        p.text = defaultPassages[0].text;
+                    }
                     return p;
                 });
                 savePassageDatabase(sanitized);
@@ -111,37 +99,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let passageDatabase = loadPassageDatabase();
 
-    /**
-     * STRICT AUTOMATIC PASSAGE SELECTOR ENGINE:
-     * For Hindi tests, strictly prioritizes Kruti Dev 010 (hi_krutidev) passages!
-     */
     function getAutoSelectedPassage(targetLang) {
-        // If target is any Hindi layout, strictly prefer hi_krutidev unless specified otherwise
         let effectiveTarget = targetLang;
         if (targetLang.startsWith('hi_') && state.admin.hindiFontEngine === 'hi_krutidev') {
             effectiveTarget = 'hi_krutidev';
         }
 
-        // Priority 1: Exact layout match (e.g. hi_krutidev)
         let matching = passageDatabase.filter(p => p.lang === effectiveTarget);
 
-        // Priority 2: Fallback to any hi_krutidev passages if available
         if (matching.length === 0 && effectiveTarget.startsWith('hi_')) {
             matching = passageDatabase.filter(p => p.lang === 'hi_krutidev');
         }
 
-        // Priority 3: Fallback to any Hindi passage
         if (matching.length === 0 && effectiveTarget.startsWith('hi_')) {
             matching = passageDatabase.filter(p => p.lang.startsWith('hi_'));
         }
 
         if (matching.length === 0) {
-            return {
-                id: 'fallback_krutidev',
-                title: 'हिन्दी न्यायिक मूल्यांकन पाठ #1 (कृतिदेव 010)',
-                lang: 'hi_krutidev',
-                text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
-            };
+            return defaultPassages[0];
         }
 
         const randomIndex = Math.floor(Math.random() * matching.length);
@@ -197,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             targetText: '',
             targetTokens: [],
             typedText: '',
+            rawKrutiKeystrokes: '',
             activeSignature: ''
         },
         completedResults: []
@@ -388,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Step 1: Registration Form -> Shows Instructions Modal & Requests Fullscreen
     const btnConfirmReg = document.getElementById('btn-confirm-registration');
     if (btnConfirmReg) {
         btnConfirmReg.addEventListener('click', () => {
@@ -421,7 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Step 2: Confirm Instructions -> Starts Exam Sequence
     const btnStartAfterInst = document.getElementById('btn-start-after-instructions');
     if (btnStartAfterInst) {
         btnStartAfterInst.addEventListener('click', () => {
@@ -482,6 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
             targetText: '',
             targetTokens: [],
             typedText: '',
+            rawKrutiKeystrokes: '',
             activeSignature: ''
         };
 
@@ -557,16 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 150);
     }
 
-    // --- 6. REAL-TIME HINDI ENGINE, ALT-CODE ACCUMULATOR & KEYSTROKE RATE LIMITER ---
-    function insertTextAtCursor(inputEl, text) {
-        const startPos = inputEl.selectionStart;
-        const endPos = inputEl.selectionEnd;
-        const value = inputEl.value;
-
-        inputEl.value = value.substring(0, startPos) + text + value.substring(endPos);
-        inputEl.selectionStart = inputEl.selectionEnd = startPos + text.length;
-    }
-
+    // --- 6. REAL-TIME HINDI ENGINE, PHONETIC REORDERING & KEYSTROKE RATE LIMITER ---
     function checkKeystrokeRateLimit() {
         const now = Date.now();
         keystrokeRateTracker.timestamps.push(now);
@@ -593,32 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
         });
     }
-
-    typingInput.addEventListener('beforeinput', (e) => {
-        if (!checkKeystrokeRateLimit()) {
-            e.preventDefault();
-            return;
-        }
-
-        const stageConfig = state.sequence.stages[state.sequence.activeStageIndex] || state.sequence.stages[0];
-        if (stageConfig.lang.startsWith('hi_') && !altCodeTracker.isAltDown) {
-            if (e.inputType === 'insertText' && e.data && e.data.length === 1) {
-                const mapped = FontEngine.mapKeyToHindi(e.data, stageConfig.lang);
-                if (mapped) {
-                    e.preventDefault();
-                    insertTextAtCursor(typingInput, mapped);
-                    if (!state.exam.hasStarted) startTimer();
-                    state.exam.totalKeystrokes++;
-                    state.exam.typedText = typingInput.value;
-                    evaluateMatching();
-                    updateMetrics();
-                    checkEarlyPassageCompletion();
-                } else if (/^[a-zA-Z]$/.test(e.data)) {
-                    e.preventDefault();
-                }
-            }
-        }
-    });
 
     typingInput.addEventListener('keydown', (e) => {
         if (!checkKeystrokeRateLimit()) {
@@ -648,7 +588,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (e.key === ' ' || e.key === 'Space') {
-            if (typingInput.value.length === 0 || typingInput.value.endsWith(' ') || typingInput.value.endsWith('\n')) {
+            if (stageConfig.lang.startsWith('hi_')) {
+                e.preventDefault();
+                state.exam.rawKrutiKeystrokes += ' ';
+                state.exam.typedText = FontEngine.convertKrutiDevToUnicode(state.exam.rawKrutiKeystrokes);
+                typingInput.value = state.exam.typedText;
+                if (!state.exam.hasStarted) startTimer();
+                state.exam.totalKeystrokes++;
+                evaluateMatching();
+                updateMetrics();
+                checkEarlyPassageCompletion();
+                return;
+            } else if (typingInput.value.length === 0 || typingInput.value.endsWith(' ') || typingInput.value.endsWith('\n')) {
                 e.preventDefault();
                 return;
             }
@@ -665,28 +616,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
             }
-        }
 
-        if (stageConfig.lang.startsWith('hi_') && !e.ctrlKey && !e.altKey && !e.metaKey && e.key.length === 1) {
-            const hindiChar = FontEngine.mapKeyToHindi(e.key, stageConfig.lang);
-            if (hindiChar) {
+            if (stageConfig.lang.startsWith('hi_')) {
                 e.preventDefault();
-                insertTextAtCursor(typingInput, hindiChar);
-
-                if (!state.exam.hasStarted) {
-                    startTimer();
+                if (state.exam.rawKrutiKeystrokes.length > 0) {
+                    state.exam.rawKrutiKeystrokes = state.exam.rawKrutiKeystrokes.slice(0, -1);
+                    state.exam.typedText = FontEngine.convertKrutiDevToUnicode(state.exam.rawKrutiKeystrokes);
+                    typingInput.value = state.exam.typedText;
+                    evaluateMatching();
+                    updateMetrics();
                 }
-
-                state.exam.totalKeystrokes++;
-                state.exam.typedText = typingInput.value;
-                evaluateMatching();
-                updateMetrics();
-                checkEarlyPassageCompletion();
-                return;
-            } else if (/^[a-zA-Z]$/.test(e.key)) {
-                e.preventDefault();
                 return;
             }
+        }
+
+        // KRUTI DEV 010 / REMINGTON GAIL REALTIME PHONETIC REORDERING ENGINE
+        if (stageConfig.lang.startsWith('hi_') && !e.ctrlKey && !e.altKey && !e.metaKey && e.key.length === 1) {
+            e.preventDefault();
+            state.exam.rawKrutiKeystrokes += e.key;
+            state.exam.typedText = FontEngine.convertKrutiDevToUnicode(state.exam.rawKrutiKeystrokes);
+            typingInput.value = state.exam.typedText;
+
+            if (!state.exam.hasStarted) {
+                startTimer();
+            }
+
+            state.exam.totalKeystrokes++;
+            evaluateMatching();
+            updateMetrics();
+            checkEarlyPassageCompletion();
+            return;
         }
 
         if (!state.exam.hasStarted && (e.key.length === 1 || e.key === 'Space')) {
@@ -699,6 +658,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     typingInput.addEventListener('input', () => {
+        const stageConfig = state.sequence.stages[state.sequence.activeStageIndex] || state.sequence.stages[0];
+        if (stageConfig.lang.startsWith('hi_')) return;
+
         if (!state.exam.hasStarted && typingInput.value.length > 0) {
             startTimer();
         }

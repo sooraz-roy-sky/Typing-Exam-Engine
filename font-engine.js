@@ -1,6 +1,6 @@
 /**
  * Typing Exam Engine - Font & Keyboard Engine Module
- * Official Kruti Dev 010 & Remington Gail Keyboard Chart Verified Engine
+ * Official Kruti Dev 010 ANSI -> Unicode Phonetic Reordering Engine
  */
 
 const FontEngine = (function () {
@@ -77,7 +77,6 @@ const FontEngine = (function () {
         '/': 'ध', '?': 'घ'
     };
 
-    // Devanagari Remington Gail Keymap (Identical to Official Kruti Dev 010 Chart)
     const remingtonGailMap = { ...krutiDevMap };
 
     // Complete Kruti Dev 010 / Remington Gail Alt Code Shortcuts Reference
@@ -112,12 +111,96 @@ const FontEngine = (function () {
         '0241': 'ष'
     };
 
+    function isConsonant(ch) {
+        return /^[कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहळज्ञत्रक्षअआइईउऊऋएऐओऔ]$/.test(ch);
+    }
+
     /**
-     * Map physical keypress to Hindi character based on active font layout
+     * Convert raw Kruti Dev ANSI key sequence into normalized Devanagari Unicode
      */
+    function convertKrutiDevToUnicode(krutiStr) {
+        if (!krutiStr) return "";
+
+        let str = krutiStr;
+
+        // 1. Replace special Kruti Dev Alt-codes & ligatures
+        const specialMap = {
+            'ñ': 'ह्न', 'ò': 'हृ', 'ó': 'क्ट', 'ô': 'ष्ट', 'õ': 'ष्ठ',
+            'ö': 'द्व', '÷': 'ट्ठ', 'ø': 'दद्य', 'ù': 'द्व', 'ú': 'दृ',
+            'û': 'न्न्', 'ü': 'द्ग', 'ý': 'द्ब', 'þ': 'द्ध', 'ÿ': 'द्म्',
+            '±': 'ह्न', '²': 'हृ', '³': 'क्ट', '´': 'ष्ट', 'µ': 'ष्ठ',
+            '¶': 'द्व', '·': 'ट्ठ', '¸': 'दद्य', '¹': 'द्व', 'º': 'दृ',
+            '»': 'न्न्', '¼': 'द्ग', '½': 'द्ब', '¾': 'द्ध', '¿': 'द्म्',
+            'À': 'द्द', 'Á': 'द्य', 'Â': 'द्व', 'Ã': 'ष्ट', 'Ä': 'ष्ठ',
+            'Å': 'ऋ', 'Æ': 'अॉ', 'Ç': 'क', 'È': 'ख', 'É': 'ग',
+            'Ê': 'घ', 'Ë': 'ङ', 'Ì': 'च', 'Í': 'छ', 'Î': 'ज',
+            'Ï': 'झ', 'Ð': 'ञ', 'Ñ': 'ट', 'Ò': 'ठ', 'Ó': 'ड',
+            'Ô': 'ढ', 'Õ': 'ण', 'Ö': 'त', '×': 'थ', 'Ø': 'कृ',
+            'Ù': 'द्र', 'Ú': 'ध', 'Û': 'न', 'Ü': 'प', 'Ý': 'फ',
+            'Þ': 'ब', 'ß': 'भ', 'à': 'म', 'á': 'य', 'â': 'र',
+            'ã': 'ल', 'ä': 'व', 'å': 'श', 'æ': 'ष', 'ç': 'स',
+            'è': 'ह', 'é': 'ळ', 'ê': 'क्ष', 'ë': 'त्र', 'ì': 'ज्ञ'
+        };
+
+        for (let k in specialMap) {
+            str = str.split(k).join(specialMap[k]);
+        }
+
+        // 2. Map raw ANSI characters to Unicode equivalents
+        let tokens = [];
+        for (let i = 0; i < str.length; i++) {
+            let ch = str[i];
+            let mapped = krutiDevMap[ch];
+            if (mapped !== undefined) {
+                tokens.push(mapped);
+            } else {
+                tokens.push(ch);
+            }
+        }
+
+        // 3. Fix Pre-Position Matra 'ि' (f in Kruti Dev):
+        // Shift 'ि' from BEFORE consonant to AFTER consonant
+        for (let i = 0; i < tokens.length; i++) {
+            if (tokens[i] === 'ि') {
+                let j = i + 1;
+                while (j < tokens.length && (tokens[j].endsWith('्') || isConsonant(tokens[j]))) {
+                    if (!tokens[j].endsWith('्')) {
+                        j++;
+                        break;
+                    }
+                    j++;
+                }
+                if (j > i + 1) {
+                    let matra = tokens.splice(i, 1)[0];
+                    tokens.splice(j - 1, 0, matra);
+                }
+            }
+        }
+
+        // 4. Fix Reph 'Z' or '’' or '्' + 'र':
+        // Shift Reph from AFTER consonant to BEFORE consonant
+        for (let i = 0; i < tokens.length; i++) {
+            if (tokens[i] === '’' || tokens[i] === 'Z' || tokens[i] === 'र्') {
+                let j = i - 1;
+                while (j >= 0 && (tokens[j].endsWith('्') || isConsonant(tokens[j]) || /^[ािीुूृेैोौंःँ़]$/.test(tokens[j]))) {
+                    if (isConsonant(tokens[j])) {
+                        break;
+                    }
+                    j--;
+                }
+                if (j >= 0 && j < i) {
+                    let reph = tokens.splice(i, 1)[0];
+                    tokens.splice(j, 0, 'र्');
+                }
+            }
+        }
+
+        return tokens.join('');
+    }
+
     function mapKeyToHindi(key, layout) {
         if (!key || key === ' ' || key === 'Enter' || key === 'Backspace' || key === 'Tab' || key === 'Escape') {
-            return null; // Return null so space/backspace/enter are handled natively
+            return null;
         }
 
         if (layout === 'hi_krutidev' || layout === 'hi_remington') {
@@ -129,37 +212,14 @@ const FontEngine = (function () {
         return null;
     }
 
-    /**
-     * Resolve Alt Code string (e.g. "0204") to Devanagari character
-     */
     function resolveAltCode(codeStr) {
         return altCodeShortcuts[codeStr] || null;
     }
 
-    /**
-     * Convert raw Kruti Dev ANSI text to normalized Devanagari Unicode
-     */
-    function convertKrutiDevToUnicode(ansiText) {
-        if (!ansiText) return "";
-        let result = "";
-        for (let i = 0; i < ansiText.length; i++) {
-            let ch = ansiText[i];
-            if (ch === 'f' && i + 1 < ansiText.length) {
-                let nextCh = ansiText[i + 1];
-                let mappedNext = krutiDevMap[nextCh] || nextCh;
-                result += mappedNext + 'ि';
-                i++;
-            } else {
-                result += krutiDevMap[ch] || ch;
-            }
-        }
-        return result;
-    }
-
     return {
         mapKeyToHindi: mapKeyToHindi,
-        resolveAltCode: resolveAltCode,
         convertKrutiDevToUnicode: convertKrutiDevToUnicode,
+        resolveAltCode: resolveAltCode,
         inScriptMap: inScriptMap,
         remingtonGailMap: remingtonGailMap,
         krutiDevMap: krutiDevMap,
