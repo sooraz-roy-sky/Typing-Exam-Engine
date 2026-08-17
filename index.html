@@ -24,6 +24,9 @@
       </div>
     </div>
     <div class="header-controls">
+      <button type="button" id="btn-alt-codes-nav" class="btn btn-secondary" title="View Kruti Dev Alt Codes Reference">
+        ⌨️ Alt Codes Sheet
+      </button>
       <button type="button" id="btn-history-nav" class="btn btn-secondary" title="View Past Exam Scorecards">
         📜 Past Results
       </button>
@@ -56,7 +59,7 @@
           <ul class="exam-features">
             <li>✓ Auto-selects random exam passage</li>
             <li>✓ Default Hindi Engine: Kruti Dev 010</li>
-            <li>✓ Single Word Backspace Only (Default)</li>
+            <li>✓ Full Alt Code Combinations Support (Alt+0204, Alt+0216)</li>
             <li>✓ Qualification: Eng ≥30 WPM, Hindi ≥25 WPM</li>
             <li>✓ Clean A4 Single-Page B&W Printable Scorecard</li>
           </ul>
@@ -87,6 +90,7 @@
           <p>Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min)</p>
           <ul class="exam-features">
             <li>✓ Kruti Dev 010 (Default), Remington Gail & InScript</li>
+            <li>✓ Full Alt Code Shortcuts Support</li>
             <li>✓ Qualification: ≥25 Net WPM</li>
             <li>✓ Printable Scorecard</li>
           </ul>
@@ -161,6 +165,53 @@
     </section>
 
   </main>
+
+  <!-- Modal 0.5: Kruti Dev 010 Alt Code Shortcuts Sheet Modal -->
+  <div id="modal-alt-codes" class="modal-overlay">
+    <div class="modal-box" style="max-width: 780px;">
+      <div class="card-title">
+        <span>⌨️ Kruti Dev 010 & Remington Gail Alt Code Shortcuts Sheet</span>
+        <button type="button" class="btn btn-secondary modal-close-btn">✕</button>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Hold <kbd>Alt</kbd> key and type the 4-digit code on Numpad to produce special Devanagari characters:
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; max-height: 420px; overflow-y: auto; background: var(--bg-input); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <div class="alt-code-chip"><kbd>Alt + 0197</kbd> \(\rightarrow\) <strong>ऋ</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0199</kbd> \(\rightarrow\) <strong>क्र</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0200</kbd> \(\rightarrow\) <strong>फ्र</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0201</kbd> \(\rightarrow\) <strong>ज्ञ</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0202</kbd> \(\rightarrow\) <strong>त्र</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0203</kbd> \(\rightarrow\) <strong>क्ष</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0204</kbd> \(\rightarrow\) <strong>द्द</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0205</kbd> \(\rightarrow\) <strong>द्य</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0206</kbd> \(\rightarrow\) <strong>द्ध</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0207</kbd> \(\rightarrow\) <strong>द्भ</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0209</kbd> \(\rightarrow\) <strong>न्न</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0211</kbd> \(\rightarrow\) <strong>प्र</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0212</kbd> \(\rightarrow\) <strong>प्त</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0214</kbd> \(\rightarrow\) <strong>क्त</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0216</kbd> \(\rightarrow\) <strong>कृ</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0217</kbd> \(\rightarrow\) <strong>द्र</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0221</kbd> \(\rightarrow\) <strong>्य</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0224</kbd> \(\rightarrow\) <strong>फ</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0225</kbd> \(\rightarrow\) <strong>भ</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0226</kbd> \(\rightarrow\) <strong>ह्न</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0228</kbd> \(\rightarrow\) <strong>झ</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0230</kbd> \(\rightarrow\) <strong>द्व</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0241</kbd> \(\rightarrow\) <strong>ष</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0161</kbd> \(\rightarrow\) <strong>‘</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0162</kbd> \(\rightarrow\) <strong>’</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0170</kbd> \(\rightarrow\) <strong>‘‘</strong></div>
+        <div class="alt-code-chip"><kbd>Alt + 0171</kbd> \(\rightarrow\) <strong>’’</strong></div>
+      </div>
+
+      <div style="margin-top: 1rem; text-align: right;">
+        <button type="button" class="btn btn-secondary modal-close-btn">Close Reference Sheet</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal 1: Candidate Registration Form -->
   <div id="modal-registration" class="modal-overlay">

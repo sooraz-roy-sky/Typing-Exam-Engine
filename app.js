@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * Early Access Fast-Forward Testing Overrides (Skip Warmup & Skip Rest Break Controllers)
+ * Full Kruti Dev 010 / Remington Gail Alt Code Shortcuts Real-Time Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -103,10 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return matching[randomIndex];
     }
 
-    // --- 2. GLOBAL STATE & KEYSTROKE RATE LIMITER ---
+    // --- 2. GLOBAL STATE, KEYSTROKE RATE LIMITER & ALT CODE BUFFER ---
     let keystrokeRateTracker = {
         timestamps: [],
         MAX_KEYSTROKES_PER_SEC: 20
+    };
+
+    let altCodeTracker = {
+        isAltDown: false,
+        buffer: ''
     };
 
     let state = {
@@ -119,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isUnlocked: false,
             hindiFontEngine: 'hi_krutidev', // DEFAULT HINDI ENGINE: Kruti Dev 010
             showQualificationStatus: false,
-            fastForwardTestingMode: true // DEFAULT EARLY ACCESS TESTING MODE: ON
+            fastForwardTestingMode: true // DEFAULT TESTING MODE: ON
         },
         config: {
             backspaceRule: 'SingleWord', // DEFAULT: Single Word Backspace Only
@@ -180,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {}
     }
 
-    // --- SECURITY GUARD: BLOCK DEVTOOLS & VIEW-SOURCE SHORTCUTS DURING EXAM ---
+    // --- SECURITY GUARD & ALT-KEY RELEASE LISTENER ---
     window.addEventListener('keydown', (e) => {
         if (state.exam.isRunning) {
             if (e.key === 'F12' || 
@@ -190,12 +195,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         }
+    });
 
-        if (e.altKey && (e.key === 'h' || e.key === 'H')) {
-            e.preventDefault();
-            navigateToHome();
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'Alt') {
+            if (altCodeTracker.buffer.length > 0) {
+                processAltCodeBuffer();
+            }
+            altCodeTracker.isAltDown = false;
         }
     });
+
+    function processAltCodeBuffer() {
+        if (!altCodeTracker.buffer) return;
+        
+        let code = altCodeTracker.buffer;
+        if (code.length === 3) code = '0' + code;
+
+        const mappedChar = FontEngine.resolveAltCode(code);
+        if (mappedChar && typingInput) {
+            insertTextAtCursor(typingInput, mappedChar);
+            if (!state.exam.hasStarted) startTimer();
+            state.exam.totalKeystrokes++;
+            state.exam.typedText = typingInput.value;
+            evaluateMatching();
+            updateMetrics();
+            checkEarlyPassageCompletion();
+        }
+        altCodeTracker.buffer = '';
+    }
 
     // --- 3. DOM ELEMENTS ---
     const viewHome = document.getElementById('view-home');
@@ -214,12 +242,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalHistory = document.getElementById('modal-history');
     const modalAdmin = document.getElementById('modal-admin');
     const modalScorecard = document.getElementById('modal-scorecard');
+    const modalAltCodes = document.getElementById('modal-alt-codes');
 
+    const btnAltCodesNav = document.getElementById('btn-alt-codes-nav');
     const btnSkipWarmup = document.getElementById('btn-skip-warmup');
     const btnSkipBreak = document.getElementById('btn-skip-break');
 
     const lessonLangSelect = document.getElementById('lesson-lang');
     const lessonTextArea = document.getElementById('lesson-text');
+
+    if (btnAltCodesNav) {
+        btnAltCodesNav.addEventListener('click', () => {
+            if (modalAltCodes) modalAltCodes.classList.add('open');
+        });
+    }
 
     if (lessonLangSelect && lessonTextArea) {
         lessonLangSelect.addEventListener('change', () => {
@@ -234,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- FAST-FORWARD TESTING OVERRIDES ---
     if (btnSkipWarmup) {
         btnSkipWarmup.addEventListener('click', () => {
             if (state.sequence.activePhase === 'WARMUP') {
@@ -261,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalHistory) modalHistory.classList.remove('open');
         if (modalAdmin) modalAdmin.classList.remove('open');
         if (modalScorecard) modalScorecard.classList.remove('open');
+        if (modalAltCodes) modalAltCodes.classList.remove('open');
     }
 
     function navigateToHome() {
@@ -456,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 150);
     }
 
-    // --- 6. REAL-TIME HINDI ENGINE & KEYSTROKE RATE LIMITER ---
+    // --- 6. REAL-TIME HINDI ENGINE, ALT-CODE ACCUMULATOR & KEYSTROKE RATE LIMITER ---
     function insertTextAtCursor(inputEl, text) {
         const startPos = inputEl.selectionStart;
         const endPos = inputEl.selectionEnd;
@@ -500,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const stageConfig = state.sequence.stages[state.sequence.activeStageIndex] || state.sequence.stages[0];
-        if (stageConfig.lang.startsWith('hi_')) {
+        if (stageConfig.lang.startsWith('hi_') && !altCodeTracker.isAltDown) {
             if (e.inputType === 'insertText' && e.data && e.data.length === 1) {
                 const mapped = FontEngine.mapKeyToHindi(e.data, stageConfig.lang);
                 if (mapped) {
@@ -526,6 +562,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const stageConfig = state.sequence.stages[state.sequence.activeStageIndex] || state.sequence.stages[0];
+
+        // ALT CODE SHORTCUT ACCUMULATION LISTENER
+        if (e.key === 'Alt') {
+            altCodeTracker.isAltDown = true;
+            altCodeTracker.buffer = '';
+            return;
+        }
+
+        if (altCodeTracker.isAltDown && (e.key.startsWith('Numpad') || /^[0-9]$/.test(e.key))) {
+            const digit = e.key.replace('Numpad', '');
+            if (/^[0-9]$/.test(digit)) {
+                e.preventDefault();
+                altCodeTracker.buffer += digit;
+                if (altCodeTracker.buffer.length === 4) {
+                    processAltCodeBuffer();
+                }
+                return;
+            }
+        }
 
         if (e.key === ' ' || e.key === 'Space') {
             if (typingInput.value.length === 0 || typingInput.value.endsWith(' ') || typingInput.value.endsWith('\n')) {

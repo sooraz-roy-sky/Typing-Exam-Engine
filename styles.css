@@ -186,6 +186,35 @@ body.no-scroll-exam .typing-input-box {
   width: 100%;
 }
 
+/* Alt Code Reference Chips */
+.alt-code-chip {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-primary);
+}
+
+.alt-code-chip strong {
+  font-family: var(--font-hindi);
+  font-size: 1.15rem;
+  color: var(--accent-cyan);
+}
+
+kbd {
+  background: #374151;
+  color: #f9fafb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  box-shadow: 0 2px 0 #1f2937;
+}
+
 /* Home Exam Cards Grid */
 .hero-header {
   text-align: center;

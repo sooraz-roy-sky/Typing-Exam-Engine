@@ -41,19 +41,36 @@ const FontEngine = (function () {
         '1': '१', '2': '२', '3': '३', '4': '४', '5': '५', '6': '६', '7': '७', '8': '८', '9': '९', '0': '०'
     };
 
-    // Alt Code Shortcuts for Kruti Dev 010 / Remington Gail Legal Texts
+    // Complete Kruti Dev 010 / Remington Gail Alt Code Shortcuts Reference
     const altCodeShortcuts = {
-        '0204': 'द्द',
-        '0216': 'कृ',
-        '0226': 'ह्न',
-        '0197': 'ऋ',
-        '0205': 'द्य',
-        '0217': 'द्र',
-        '0230': 'द्व',
         '0161': '‘',
         '0162': '’',
         '0170': '‘‘',
-        '0171': '’’'
+        '0171': '’’',
+        '0197': 'ऋ',
+        '0199': 'क्र',
+        '0200': 'फ्र',
+        '0201': 'ज्ञ',
+        '0202': 'त्र',
+        '0203': 'क्ष',
+        '0204': 'द्द',
+        '0205': 'द्य',
+        '0206': 'द्ध',
+        '0207': 'द्भ',
+        '0209': 'न्न',
+        '0210': 'न्न्',
+        '0211': 'प्र',
+        '0212': 'प्त',
+        '0214': 'क्त',
+        '0216': 'कृ',
+        '0217': 'द्र',
+        '0221': '्य',
+        '0224': 'फ',
+        '0225': 'भ',
+        '0226': 'ह्न',
+        '0228': 'झ',
+        '0230': 'द्व',
+        '0241': 'ष'
     };
 
     /**
@@ -73,6 +90,13 @@ const FontEngine = (function () {
         }
 
         return null;
+    }
+
+    /**
+     * Resolve Alt Code string (e.g. "0204") to Devanagari character
+     */
+    function resolveAltCode(codeStr) {
+        return altCodeShortcuts[codeStr] || null;
     }
 
     /**
@@ -97,6 +121,7 @@ const FontEngine = (function () {
 
     return {
         mapKeyToHindi: mapKeyToHindi,
+        resolveAltCode: resolveAltCode,
         convertKrutiDevToUnicode: convertKrutiDevToUnicode,
         inScriptMap: inScriptMap,
         remingtonGailMap: remingtonGailMap,
