@@ -1,6 +1,6 @@
 /**
  * Typing Test Portal - Enterprise Assessment Controller
- * DevSecOps Hardened: Cryptographic Verification Signatures, Keystroke Rate Limiting & SHA-256 Auth
+ * Automatic Random Passage Selector & Admin Passage Manager Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         } catch (e) {
-            // Fallback hex generator
             let hash = 0;
             for (let i = 0; i < text.length; i++) {
                 hash = ((hash << 5) - hash) + text.charCodeAt(i);
@@ -33,29 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return raw.substring(0, 16).toUpperCase();
     }
 
-    // --- 1. GENERIC PASSAGE DATABASE ---
-    const passageDatabase = [
+    // --- 1. DEFAULT PASSAGE DATABASE (PERSISTED IN LOCALSTORAGE) ---
+    const defaultPassages = [
         {
             id: 'en_standard_01',
-            title: 'English Standard Assessment Passage #1',
+            title: 'English Judicial & Administrative Passage #1',
             lang: 'en_qwerty',
             text: 'India is a sovereign, socialist, secular, democratic republic with a parliamentary system of governance. The Constitution was adopted by the Constituent Assembly on 26th November 1949 and came into effect on 26th January 1950. The High Court of Judicature has exclusive jurisdiction to hear appeal petitions arising from civil court decisions. Every citizen enjoys fundamental rights guaranteed under Part III of the Constitution.'
         },
         {
             id: 'en_prose_02',
-            title: 'English Technical & Economic Prose Passage #2',
+            title: 'English Economic & Technological Passage #2',
             lang: 'en_qwerty',
             text: 'Economic growth in developing nations relies heavily on modern infrastructure, digital connectivity, and skilled human resources. Transportation networks facilitate efficient trade and distribution of industrial goods across domestic and international markets. Public sector investment in renewable energy projects continues to accelerate technological innovation.'
         },
         {
             id: 'hi_inscript_01',
-            title: 'Hindi Standard Devanagari Assessment Passage #1 (Unicode InScript)',
+            title: 'Hindi Devanagari Standard Passage #1 (Unicode InScript)',
             lang: 'hi_inscript',
             text: 'भारत एक सम्प्रभुतासम्पन्न, समाजवादी, पंथनिरपेक्ष, लोकतांत्रिक गणराज्य है। संविधान सभा द्वारा २६ नवम्बर १९४९ को संविधान अंगीकृत किया गया था तथा २६ जनवरी १९५० को पूर्ण रूप से लागू हुआ। उच्च न्यायालय को नागरिकों के मौलिक अधिकारों के संरक्षण हेतु याचिकाएं स्वीकार करने का पूर्ण अधिकार है।'
         },
         {
             id: 'hi_remington_01',
-            title: 'Hindi Judiciary & Legislative Prose Passage #2 (Remington Gail)',
+            title: 'Hindi Judiciary Prose Passage #2 (Remington Gail)',
             lang: 'hi_remington',
             text: 'भारतीय न्यायपालिका स्वतंत्र एवं निष्पक्ष कार्यप्रणाली के लिए जानी जाती है। राज्य विधायिका द्वारा पारित विधेयकों की संवैधानिकता की समीक्षा करने की शक्ति उच्च न्यायालय तथा उच्चतम न्यायालय में निहित है। जनहित याचिकाओं के माध्यम से आम नागरिकों को त्वरित न्याय सुलभ कराया जाता है।'
         },
@@ -66,6 +65,48 @@ document.addEventListener('DOMContentLoaded', () => {
             text: 'भारत एक विशाल देश है। इस देश में विविध संस्कृति एवं भाषाएं हैं। उच्च न्यायालय एवं उच्चतम न्यायालय देश की न्यायिक संरचना का मुख्य अंग हैं। न्यायिक स्वतंत्रता भारतीय संविधान की मुख्य विशेषता है।'
         }
     ];
+
+    function loadPassageDatabase() {
+        try {
+            const saved = localStorage.getItem('typing_passage_database');
+            if (saved) return JSON.parse(saved);
+        } catch (e) {}
+        return [...defaultPassages];
+    }
+
+    function savePassageDatabase(db) {
+        try {
+            localStorage.setItem('typing_passage_database', JSON.stringify(db));
+        } catch (e) {}
+    }
+
+    let passageDatabase = loadPassageDatabase();
+
+    /**
+     * AUTOMATIC PASSAGE SELECTOR ENGINE:
+     * Selects a random passage matching the target language (en_qwerty or hi_*).
+     */
+    function getAutoSelectedPassage(targetLang) {
+        const matching = passageDatabase.filter(p => {
+            if (targetLang === 'en_qwerty') return p.lang === 'en_qwerty';
+            return p.lang.startsWith('hi_') || p.lang === targetLang;
+        });
+
+        if (matching.length === 0) {
+            // Fallback default passage
+            return {
+                id: 'fallback_01',
+                title: targetLang.startsWith('hi_') ? 'Hindi Assessment Passage' : 'English Assessment Passage',
+                lang: targetLang,
+                text: targetLang.startsWith('hi_')
+                    ? 'भारत एक समृद्ध और विविधताओं से भरा देश है। यहाँ की संस्कृति और भाषाएँ विश्व भर में प्रसिद्ध हैं।'
+                    : 'The Constitution of India guarantees fundamental rights to all citizens to ensure freedom, equality, and justice.'
+            };
+        }
+
+        const randomIndex = Math.floor(Math.random() * matching.length);
+        return matching[randomIndex];
+    }
 
     // --- 2. GLOBAL STATE & KEYSTROKE RATE LIMITER ---
     let keystrokeRateTracker = {
@@ -146,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- SECURITY GUARD: BLOCK DEVTOOLS & VIEW-SOURCE SHORTCUTS DURING EXAM ---
     window.addEventListener('keydown', (e) => {
         if (state.exam.isRunning) {
-            // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
             if (e.key === 'F12' || 
                 (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
                 (e.ctrlKey && (e.key === 'u' || e.key === 'U'))) {
@@ -264,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. EXAM SEQUENCE CONTROLLER ---
+    // --- 5. EXAM SEQUENCE CONTROLLER (WITH AUTOMATIC PASSAGE SELECTION) ---
     function setupExamSequence() {
         state.completedResults = [];
         state.sequence.activeStageIndex = 0;
@@ -273,16 +313,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (mode === 'combined') {
             state.sequence.stages = [
-                { stageName: 'Stage 1: English Typing Test', lang: 'en_qwerty', passageId: 'en_standard_01' },
-                { stageName: 'Stage 2: Hindi Typing Test', lang: state.admin.hindiFontEngine || 'hi_inscript', passageId: (state.admin.hindiFontEngine === 'hi_krutidev' ? 'hi_krutidev_01' : (state.admin.hindiFontEngine === 'hi_remington' ? 'hi_remington_01' : 'hi_inscript_01')) }
+                { stageName: 'Stage 1: English Typing Test', lang: 'en_qwerty' },
+                { stageName: 'Stage 2: Hindi Typing Test', lang: state.admin.hindiFontEngine || 'hi_inscript' }
             ];
         } else if (mode === 'english') {
             state.sequence.stages = [
-                { stageName: 'English Typing Test', lang: 'en_qwerty', passageId: 'en_standard_01' }
+                { stageName: 'English Typing Test', lang: 'en_qwerty' }
             ];
         } else {
             state.sequence.stages = [
-                { stageName: 'Hindi Typing Test', lang: state.admin.hindiFontEngine || 'hi_inscript', passageId: (state.admin.hindiFontEngine === 'hi_krutidev' ? 'hi_krutidev_01' : (state.admin.hindiFontEngine === 'hi_remington' ? 'hi_remington_01' : 'hi_inscript_01')) }
+                { stageName: 'Hindi Typing Test', lang: state.admin.hindiFontEngine || 'hi_inscript' }
             ];
         }
 
@@ -318,7 +358,8 @@ document.addEventListener('DOMContentLoaded', () => {
             activeSignature: ''
         };
 
-        const passageObj = passageDatabase.find(p => p.id === stageConfig.passageId) || passageDatabase[0];
+        // AUTOMATIC PASSAGE SELECTION ENGINE
+        const passageObj = getAutoSelectedPassage(stageConfig.lang);
         state.exam.targetText = passageObj.text;
         state.exam.targetTokens = passageObj.text.trim().split(/\s+/);
 
@@ -363,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elStageBadge) elStageBadge.textContent = `${stageConfig.stageName} (${phaseTitle})`;
 
         const elPassageTitle = document.getElementById('label-passage-title');
-        if (elPassageTitle) elPassageTitle.textContent = passageObj.title;
+        if (elPassageTitle) elPassageTitle.textContent = `${passageObj.title} [Auto-Selected]`;
 
         const elBackspaceRule = document.getElementById('label-backspace-rule');
         if (elBackspaceRule) elBackspaceRule.textContent = `Backspace: ${state.config.backspaceRule}`;
@@ -397,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
         keystrokeRateTracker.timestamps = keystrokeRateTracker.timestamps.filter(ts => now - ts < 1000);
 
         if (keystrokeRateTracker.timestamps.length > keystrokeRateTracker.MAX_KEYSTROKES_PER_SEC) {
-            console.warn("Keystroke rate limit exceeded (>20 keys/sec). Automated script attempt blocked.");
+            console.warn("Keystroke rate limit exceeded (>20 keys/sec).");
             return false;
         }
         return true;
@@ -833,12 +874,11 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const rec of history) {
             const tr = document.createElement('tr');
             
-            // Compute real SHA-256 hash if missing on older records
             let sigDisplay = rec.signature;
             if (!sigDisplay || sigDisplay === 'SHA256-VERIFIED') {
                 const netWpm = rec.results && rec.results[0] ? rec.results[0].netWpm : '0.0';
                 sigDisplay = await getOrComputeRecordHash(rec.candidate, rec.timestamp, netWpm);
-                rec.signature = sigDisplay; // update in-memory
+                rec.signature = sigDisplay;
             }
 
             tr.innerHTML = `
@@ -884,7 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 9. RENDER CLEAN EXECUTIVE B&W A4 SCORECARD WITH CRYPTO HASH FOOTER ---
+    // --- 9. RENDER CLEAN EXECUTIVE B&W A4 SCORECARD ---
     async function renderFinalScorecard() {
         closeAllModals();
         document.body.classList.remove('no-scroll-exam');
@@ -897,7 +937,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (document.getElementById('sig-cand-name')) document.getElementById('sig-cand-name').textContent = state.candidate.name;
 
-        // Render Guaranteed Digital Verification Hash Code (e.g. 8F3C9A1E0B2D4F67)
         let activeSig = state.exam.activeSignature;
         if (!activeSig || activeSig === 'SHA256-VERIFIED') {
             const firstNetWpm = state.completedResults[0]?.netWpm || '0.0';
@@ -908,7 +947,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const sigEl = document.getElementById('sc-crypto-sig');
         if (sigEl) sigEl.textContent = activeSig;
 
-        // Qualification Status Toggle Controller (Controlled in Admin Settings)
         const showQual = state.admin.showQualificationStatus;
         const overallStatusBox = document.getElementById('sc-overall-status-box');
         const colHeadStatus = document.getElementById('col-head-status');
@@ -928,7 +966,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Render Performance Results Table
         const tbody = document.getElementById('sc-results-tbody');
         if (tbody) {
             tbody.innerHTML = '';
@@ -965,11 +1002,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalScorecard) modalScorecard.classList.add('open');
     }
 
-    // --- 10. EXAMINER ADMIN CONTROLLER WITH SHA-256 HASH VERIFICATION ---
+    // --- 10. EXAMINER ADMIN CONTROLLER & PASSAGE DATABASE MANAGER ---
     const btnAdminModal = document.getElementById('btn-admin-modal');
     if (btnAdminModal) {
         btnAdminModal.addEventListener('click', () => {
             if (modalAdmin) modalAdmin.classList.add('open');
+            if (state.admin.isUnlocked) renderPassageManagerTable();
         });
     }
 
@@ -984,9 +1022,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.admin.isUnlocked = true;
                 if (document.getElementById('admin-auth-container')) document.getElementById('admin-auth-container').style.display = 'none';
                 if (document.getElementById('admin-dashboard-container')) document.getElementById('admin-dashboard-container').style.display = 'block';
+                renderPassageManagerTable();
             } else {
                 alert('❌ Invalid Admin Password!');
             }
+        });
+    }
+
+    function renderPassageManagerTable() {
+        const tbody = document.getElementById('passage-list-tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+        if (passageDatabase.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary); padding:0.75rem;">No passages in database. Add a custom passage below!</td></tr>`;
+            return;
+        }
+
+        passageDatabase.forEach((p, idx) => {
+            const tr = document.createElement('tr');
+            const langLabel = p.lang === 'en_qwerty' ? 'English QWERTY' : (p.lang === 'hi_inscript' ? 'Hindi InScript' : (p.lang === 'hi_remington' ? 'Hindi Remington' : 'Hindi Kruti Dev'));
+            tr.innerHTML = `
+                <td><strong>${p.title}</strong></td>
+                <td>${langLabel}</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-delete-passage" data-index="${idx}" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                        🗑️ Delete
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.querySelectorAll('.btn-delete-passage').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.currentTarget.dataset.index, 10);
+                if (confirm(`Are you sure you want to delete "${passageDatabase[index].title}"?`)) {
+                    passageDatabase.splice(index, 1);
+                    savePassageDatabase(passageDatabase);
+                    renderPassageManagerTable();
+                }
+            });
         });
     }
 
@@ -1024,12 +1100,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             passageDatabase.push({
                 id: 'custom_' + Date.now(),
-                title: `[Custom] ${title}`,
+                title: title,
                 lang: lang,
                 text: text
             });
 
-            alert('✅ Custom Passage added to Database!');
+            savePassageDatabase(passageDatabase);
+            renderPassageManagerTable();
+
+            alert('✅ Custom Passage added to Database & saved!');
             if (elTitle) elTitle.value = '';
             if (elText) elText.value = '';
         });

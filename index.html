@@ -54,7 +54,7 @@
           <h3>Combined Dual Typing Test</h3>
           <p>Sequence: Warmup (2 Min) → Break (2 Min) → Actual Exam (10 Min) [Eng & Hindi]</p>
           <ul class="exam-features">
-            <li>✓ Auto-starts timer on first keypress</li>
+            <li>✓ Auto-selects random exam passage</li>
             <li>✓ Single Word Backspace Only (Default)</li>
             <li>✓ Qualification: Eng ≥30 WPM, Hindi ≥25 WPM</li>
             <li>✓ Clean A4 Single-Page B&W Printable Scorecard</li>
@@ -129,7 +129,7 @@
       <div class="passage-section">
         <div class="section-label">
           <span>TARGET TEXT TO TYPE:</span>
-          <span id="label-passage-title">Standard Passage #1</span>
+          <span id="label-passage-title">Auto-Selected Passage</span>
         </div>
         <div id="passage-container" class="passage-pane">
           <!-- Rendered dynamically -->
@@ -285,7 +285,7 @@
 
   <!-- Modal 4: Examiner Admin Settings Modal (admin123) -->
   <div id="modal-admin" class="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 680px;">
       <div class="card-title">
         <span>🔒 Examiner Admin Panel Settings</span>
         <button type="button" class="btn btn-secondary modal-close-btn">✕</button>
@@ -339,8 +339,27 @@
           </div>
         </div>
 
+        <!-- Passage Database Manager Section -->
         <div class="admin-section">
-          <h4>➕ Add Custom Passage</h4>
+          <h4>📚 Passage Database Management</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
+            Passages are automatically & randomly selected for tests. You can manage or delete passages below:
+          </p>
+
+          <table class="a4-table" style="font-size: 0.85rem; margin-bottom: 1rem;">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Language</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="passage-list-tbody">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+
+          <h5 style="color: var(--accent-cyan); margin-bottom: 0.5rem; font-size: 0.95rem;">➕ Add New Custom Passage</h5>
           <div class="form-group" style="margin-bottom: 0.8rem;">
             <label>Passage Title & Language</label>
             <div style="display: flex; gap: 0.5rem;">
@@ -353,11 +372,11 @@
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 0.8rem;">
-            <label>Text Content</label>
+            <label>Text Content *</label>
             <textarea id="lesson-text" class="form-control" style="height: 90px;" placeholder="Paste passage text here..."></textarea>
           </div>
           <button type="button" id="btn-save-custom-lesson" class="btn btn-secondary btn-block">
-            💾 Save Custom Passage
+            💾 Save Custom Passage to Database
           </button>
         </div>
 
